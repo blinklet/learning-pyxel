@@ -2,6 +2,7 @@ import pyxel
 
 pyxel.init(66, 70, title='Text',quit_key=pyxel.KEY_Q)
 
+# Display text using the default text size
 pyxel.text(1, 1,f'FONT_HEIGHT = {pyxel.FONT_HEIGHT}', 7)
 pyxel.text(1, 1 + pyxel.FONT_HEIGHT,f'FONT_WIDTH = {pyxel.FONT_WIDTH}', 7)
 pyxel.text(1, 1 + (2 * pyxel.FONT_HEIGHT),'Default text',7)
