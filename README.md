@@ -93,6 +93,18 @@ You should see the output screen shown below. Notice how the text size does not 
 
 ## Tile map autofill
 
-Tile maps fills with the sprite that is in position 0,0 in Image(0). If you do not want the tile map to autofill, leave the 8x8 sprite at 0,0 blank.
+When I made my first image and then switched to the tile map editor, I was surprised to see that the background of the tile map was covered in little images. I had a tilemap that looked like the one below:
+
+![Crazy tile map](./assets/doc-images/PyxelEdit5.png)
+
+Later, I found out that the default background of the tile map is made up of the first 8x8 sprite in the first image file. As an example, look at the platformer.pyxres from the [platformer.pyxres](https://github.com/kitao/pyxel/tree/main/pyxel/examples/assets) example on the Pyxel web site. You see that the first 8x8 sprite in the image file is a plain purple field.
+
+![Image map with blank first sprite](./assets/doc-images/PyxelEdit1.png)
+
+Switching to the Tile Map function shows that tile maps fill with the sprite that is in position `0,0` in `Image(0)`. This creates an all-purple default background, as shown below.
+
+![Default background](./assets/doc-images/PyxelEdit2.png)
+
+If you do not want the tile map to autofill, leave the 8x8 sprite at location `0,0` in `Image(0)` blank.
 
 
