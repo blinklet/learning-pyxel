@@ -93,7 +93,7 @@ You should see the output screen shown below. Notice how the text size does not 
 
 ## Tile map autofill
 
-When I made my first image and then switched to the tile map editor, I was surprised to see that the background of the tile map was covered in little images. I had a tilemap that looked like the one below:
+When I made my first image and then switched to the tile map editor, I was surprised to see that the background of the tile map was covered in little images. I had a tile map that looked like the one below:
 
 ![Crazy tile map](./assets/doc-images/PyxelEdit5.png)
 
@@ -137,7 +137,7 @@ pyxel.run(update, draw)
 
 In the above example, I have to put all the program logic in the draw function. In a more complex application, I would want to have the logic that detects user inputs and updates variables in the `update()` function and the logic that draws the screen in the `draw()` function. But, if I move the line that updates the `bird_sprite_x` variable into the `update()` function, the animation stops because the variable inside the `update()` function is in a separate namespace.
 
-One way to solve this is to use global variables, as shown below. I declared the `bird_sprite_x` variable as a global variable in both functions so I could move the logic taht updates the `bird_sprite_x` variable into the `update()` function and use the updated variable in the `draw()` function. But, this will get hard to manage as the program gets more complex.
+One way to solve this is to use global variables, as shown below. I declared the `bird_sprite_x` variable as a global variable in both functions so I could move the logic that updates the `bird_sprite_x` variable into the `update()` function and use the updated variable in the `draw()` function. But, this will get hard to manage as the program gets more complex.
 
 ```python
 import pyxel
