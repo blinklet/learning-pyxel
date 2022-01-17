@@ -108,3 +108,122 @@ Switching to the Tile Map function shows that tile maps fill with the sprite tha
 If you do not want the tile map to autofill, leave the 8x8 sprite at location `0,0` in `Image(0)` blank.
 
 
+## Why does Pyxel's documentation recommend using classes?
+
+I was interested in Pyxel because I thought it would be a great tool to introduce my child to Python programming. I did not want to start in the "deep end" with classes and object-oriented programming. But, the Pyxel documentation [recommends that you wrap pyxel code in a class](https://github.com/kitao/pyxel#create-pyxel-application) so developers can avoid using global variables to pass data from the `update()` function to the `draw()` function in a Pyxel program. If the Pyxel code is wrapped in a class, one can store data in the object instance created when the class is called then that data can be accessed by the rest of the program.
+
+For example, I created a small program that displays an animation of a bird flapping its wings. I re-used the bird sprites from the resource file in the [Platformer example](https://github.com/kitao/pyxel#try-pyxel-examples), *platformer.pyxres*.
+
+I created the first version without classes:
+
+```python
+pyxel.init(64, 32, fps=2)
+pyxel.load("assets/platformer.pyxres")
+bird_x = 28
+bird_y = 12
+bird_sprite_x = 0
+bird_sprite_y = 16
+
+def update():
+    pass
+
+def draw():
+    pyxel.cls(0)
+    bird_sprite_x = 8 * (pyxel.frame_count % 3)
+    pyxel.blt(bird_x, bird_y, 0, bird_sprite_x, bird_sprite_y, 8, 8, 2)
+
+pyxel.run(update, draw)
+```
+
+In the above example, I have to put all the program logic in the draw function. In a more complex application, I would want to have the logic that detects user inputs and updates variables in the `update()` function and the logic that draws the screen in the `draw()` function. But, if I move the line that updates the `bird_sprite_x` variable into the `update()` function, the animation stops because the variable inside the `update()` function is in a separate namespace.
+
+One way to solve this is to use global variables, as shown below. I declared the `bird_sprite_x` variable as a global variable in both functions so I could move the logic taht updates the `bird_sprite_x` variable into the `update()` function and use the updated variable in the `draw()` function. But, this will get hard to manage as the program gets more complex.
+
+```python
+import pyxel
+
+pyxel.init(64, 32, fps=2)
+pyxel.load("assets/platformer.pyxres")
+bird_x = 28
+bird_y = 12
+bird_sprite_x = 0
+bird_sprite_y = 16
+
+def update():
+    global bird_sprite_x
+    bird_sprite_x = 8 * (pyxel.frame_count % 3)
+
+def draw():
+    global bird_sprite_x
+    pyxel.cls(0)
+    pyxel.blt(bird_x, bird_y, 0, bird_sprite_x, bird_sprite_y, 8, 8, 2)
+
+pyxel.run(update, draw)
+```
+
+In the below example, I refactored this example in a class. Using classes and other object-oriented programming concepts is the better way to solve the problem of passing data between functions.
+
+```python
+class App:
+    def __init__(self):
+        pyxel.init(64, 32, fps=2)
+        pyxel.load("assets/platformer.pyxres")
+        self.bird_x = 28
+        self.bird_y = 12
+        self.bird_sprite_x = 0
+        self.bird_sprite_y = 16
+        pyxel.run(self.update, self.draw)
+
+    def update(self):
+        self.bird_sprite_x = 8 * (pyxel.frame_count % 3)
+
+    def draw(self):
+        pyxel.cls(0)
+        pyxel.blt(self.bird_x, self.bird_y, 0, self.bird_sprite_x, self.bird_sprite_y, 8, 8, 2)
+
+
+App()
+```
+
+And, in classic object-oriented programming fashion, I can create multiple instances of the same class. For example, I can define a `Bird` class, which separates all the logic and data associated with the bird from the main program logic, and create multiple instances of birds on the screen, each with its own position data.
+
+```python
+import pyxel
+
+
+class Bird:
+    def __init__(self, x, y):
+        self.bird_x = x
+        self.bird_y = y
+        self.bird_sprite_x = 0
+        self.bird_sprite_y = 16
+
+    def update(self):
+        self.bird_sprite_x = 8 * (pyxel.frame_count % 3)
+
+    def draw(self):
+        pyxel.blt(self.bird_x, self.bird_y, 0, self.bird_sprite_x, self.bird_sprite_y, 8, 8, 2)
+
+
+class App:
+    def __init__(self):
+        pyxel.init(64, 32, fps=2)
+        pyxel.load("assets/platformer.pyxres")
+        self.bird1 = Bird(0,0)
+        self.bird2 = Bird(16,16)
+        pyxel.run(self.update, self.draw)
+
+    def update(self):
+        self.bird1.update()
+        self.bird2.update()
+
+    def draw(self):
+        pyxel.cls(0)
+        self.bird1.draw()
+        self.bird2.draw()
+
+        
+App()
+```
+
+Object-oriented programming constructs like classes makes it possible to write complex game programs. But, we can still create simple animations using only functions, which should give young programmers opportunities to develop fun little programs before, if they want to develop more complex games, they have to learn about Object-oriented programming.
