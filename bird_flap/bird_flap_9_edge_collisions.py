@@ -1,8 +1,8 @@
 import pyxel
 from random import randint, choice
 
-SCREEN_SIZE_X = 32
-SCREEN_SIZE_Y = 32
+SCREEN_SIZE_X = 128
+SCREEN_SIZE_Y = 64
 OUTSIDE_SPACE_X = 0
 OUTSIDE_SPACE_Y = 0
 SPRITE_SIZE = 8
@@ -11,7 +11,7 @@ BACKGROUND_COLOR = 2
 
 
 class Bird:
-    def __init__(self, x, y, dir):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
         self.start_sprite = randint(0,2)
@@ -61,20 +61,10 @@ class Bird:
 
         # move bird
         self.x += self.velocity_x
-        print(self.x)
         self.y -= self.velocity_y
 
     def draw(self):
-        pyxel.blt(
-            self.x, 
-            self.y, 
-            self.image, 
-            self.sprite_location_x, 
-            self.sprite_location_y, 
-            self.sprite_size * self.facing, 
-            self.sprite_size, 
-            self.transparent_color
-        )
+        pyxel.blt(self.x, self.y, self.image, self.sprite_location_x, self.sprite_location_y, self.sprite_size * self.facing, self.sprite_size, self.transparent_color)
 
 
 class App:
@@ -95,14 +85,8 @@ class App:
             pyxel.quit()
 
         if pyxel.btnp(pyxel.KEY_SPACE):
-            if len(self.bird_list) < 11:
-                self.bird_list.append(
-                    Bird(
-                        randint(0, pyxel.width - SPRITE_SIZE - 1), 
-                        randint(0, pyxel.height - SPRITE_SIZE - 1),
-                        randint(0,7)  # choose direction
-                    )
-                )
+            if len(self.bird_list) < 10:
+                self.bird_list.append(Bird(randint(0, pyxel.width - SPRITE_SIZE - 1), randint(0, pyxel.height - SPRITE_SIZE - 1)))
 
         if pyxel.btnp(pyxel.KEY_BACKSPACE):
             if len(self.bird_list) > 0:
