@@ -157,22 +157,10 @@ class App:
 
                 # Check if any other bird has collided with the bird
                 # Change direction of the bird if it collided 
-                #other_bird_count = len(other_birds)
                 for other_bird in other_birds:
-                    collision_detected = False
                     if bird.intersects(other_bird.x,other_bird.y,other_bird.w,other_bird.h):
-                        temp_x = other_bird.velocity_x
-                        other_bird.velocity_x = bird.velocity_x     
-                        bird.velocity_x = temp_x
-
-                        temp_y = other_bird.velocity_y
-                        other_bird.velocity_y = bird.velocity_y     
-                        bird.velocity_y = temp_y
-
-                        # Double-check that no two other birds have also collided
-                        # If they have, no not change their direction
-                        #if bird == other_bird:
-                        #    pass
+                        bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
+                        bird.velocity_y, other_bird.velocity_y = other_bird.velocity_y, bird.velocity_y
 
                 b += 1
 

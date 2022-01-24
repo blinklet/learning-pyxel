@@ -2,13 +2,13 @@ import pyxel
 import random
 import copy
 
-SCREEN_SIZE_X = 80
-SCREEN_SIZE_Y = 80
+SCREEN_SIZE_X = 30
+SCREEN_SIZE_Y = 30
 OUTSIDE_SCREEN_SPACE_X = 0
 OUTSIDE_SCREEN_SPACE_Y = 0
 BIRD_WIDTH = 8
 BIRD_HEIGHT = 8
-FPS = 15
+FPS = 4
 BACKGROUND_COLOR = 2
 
 
@@ -34,7 +34,6 @@ class Bird:
 
         self.facing = 1    # each bird starts facing left or right, depending on velocity on x axis
 
-    # Copied intersects function from https://github.com/CaffeinatedTech/Python_Nibbles/blob/master/main.py
     def intersects(self, other_x, other_y, other_w, other_h):
         is_intersected = False
         if (
@@ -46,8 +45,64 @@ class Bird:
             is_intersected = True
         return is_intersected
 
-    def collided_with_other_bird(self,bird_list):
-        pass
+    # Copied intersects function from https://github.com/CaffeinatedTech/Python_Nibbles/blob/master/main.py
+    def collides(self, other_x, other_y, other_w, other_h):
+        # check corners
+        if (
+            other_x + other_w == self.x
+            and other_y + other_h == self.y
+        ):
+            return "top_left"
+
+        if (
+            self.x + self.w == other_x
+            and other_y + other_h == self.y
+        ):
+            return "top_right"
+
+        if (
+            other_x + other_w == self.x
+            and self.y + self.h == other_y
+        ):
+            return "bottom_left"
+
+        if (
+            self.x + self.w == other_x
+            and self.y + self.h == other_y
+        ):
+            return "bottom_right"
+
+        # check sides
+        if (
+            other_x + other_w >= self.x + 1
+            and self.x + self.w >= other_x
+            and other_y + other_h == self.y
+        ):
+            return "top"
+
+        if (
+            other_x + other_w >= self.x
+            and self.x + self.w >= other_x
+            and self.y + self.h == other_y
+        ):
+            return "bottom"
+
+        if (
+            other_x + other_w == self.x
+            and other_y + other_h >= self.y
+            and self.y + self.h >= other_y
+        ):
+            return "left"
+
+        if (
+            self.x + self.w == other_x
+            and other_y + other_h >= self.y
+            and self.y + self.h >= other_y
+        ):
+            return "right"
+        
+        return "none"
+
 
     def reached_screen_edge(self,screen_x,screen_y):
         screen_edge_detected = False
@@ -157,23 +212,48 @@ class App:
 
                 # Check if any other bird has collided with the bird
                 # Change direction of the bird if it collided 
-                #other_bird_count = len(other_birds)
                 for other_bird in other_birds:
-                    collision_detected = False
-                    if bird.intersects(other_bird.x,other_bird.y,other_bird.w,other_bird.h):
-                        temp_x = other_bird.velocity_x
-                        other_bird.velocity_x = bird.velocity_x     
-                        bird.velocity_x = temp_x
-
-                        temp_y = other_bird.velocity_y
-                        other_bird.velocity_y = bird.velocity_y     
-                        bird.velocity_y = temp_y
-
-                        # Double-check that no two other birds have also collided
-                        # If they have, no not change their direction
-                        #if bird == other_bird:
-                        #    pass
-
+                    side = bird.collides(other_bird.x,other_bird.y,other_bird.w,other_bird.h)
+                    if side != "none":
+                        print(side)
+                        if side == "top":
+                            bird.velocity_y *= -1
+                            #other_bird.velocity_y *= -1
+                            #bird.velocity_y, other_bird.velocity_y = other_bird.velocity_y, bird.velocity_y
+                        if side == "bottom":
+                            bird.velocity_y *= -1
+                            #other_bird.velocity_y *= -1
+                            #bird.velocity_y, other_bird.velocity_y = other_bird.velocity_y, bird.velocity_y
+                        if side == "left":
+                            bird.velocity_x *= -1
+                            #other_bird.velocity_x *= -1
+                            #bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
+                        if side == "right":
+                            bird.velocity_x *= -1
+                            #other_bird.velocity_x *= -1
+                            #bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
+                        if side == "top_left":
+                            bird.velocity_x *= -1
+                            #other_bird.velocity_x *= -1
+                            bird.velocity_y *= -1
+                            #other_bird.velocity_y *= -1
+                        if side == "top_right":
+                            bird.velocity_x *= -1
+                            #other_bird.velocity_x *= -1
+                            bird.velocity_y *= -1
+                            #other_bird.velocity_y *= -1
+                        if side == "bottom_left":
+                            bird.velocity_x *= -1
+                            #other_bird.velocity_x *= -1
+                            bird.velocity_y *= -1
+                            #other_bird.velocity_y *= -1
+                        if side == "bottom_right":
+                            bird.velocity_x *= -1
+                            #other_bird.velocity_x *= -1
+                            bird.velocity_y *= -1
+                            #other_bird.velocity_y *= -1
+                        #bird.velocity_x *= -1
+                        #bird.velocity_y *= -1
                 b += 1
 
                 if bird.reached_screen_edge(self.screen_x,self.screen_y):
