@@ -150,7 +150,7 @@ class Bird:
 class App:
     def __init__(self):
         pyxel.init(SCREEN_SIZE_X, SCREEN_SIZE_Y, fps=FPS)
-        pyxel.load("../assets/platformer.pyxres")
+        pyxel.load("../../assets/platformer.pyxres")
         self.screen_x = pyxel.width + OUTSIDE_SCREEN_SPACE_X - BIRD_WIDTH
         self.screen_y = pyxel.height + OUTSIDE_SCREEN_SPACE_Y - BIRD_HEIGHT
         self.bird_list = []
@@ -225,7 +225,7 @@ class App:
                                     other_bird.velocity_y = 1
                             if bird.velocity_y == 0:
                                 bird.velocity_y = -1
-                                if other_bird.velocity_y == q:
+                                if other_bird.velocity_y == 1:
                                     other_bird.velocity = 0
                                 if other_bird.velocity_y == 0:
                                     other_bird.velocity_y = -1

@@ -27,7 +27,7 @@ class Bird:
 
 class App:
     def __init__(self):
-        pyxel.init(64, 32, fps=2)
+        pyxel.init(32, 32, fps=2)
         pyxel.load("../assets/platformer.pyxres")
         self.bird1 = Bird(8,8,randint(0,2))
         self.bird2 = Bird(16,16,randint(0,2))
