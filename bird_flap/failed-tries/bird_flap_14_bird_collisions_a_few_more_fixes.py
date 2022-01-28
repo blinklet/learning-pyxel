@@ -68,6 +68,7 @@ class Bird:
         if self.y == screen_y and self.x >= 0 and self.x <= screen_x:        
             self.velocity_y = 1   
 
+
     def move(self):
         # Choose next sprite in animation sequence (there are three frames)
         self.u = 8 * ((pyxel.frame_count + self.start_sprite) % 3)
@@ -155,8 +156,20 @@ class App:
                 # Change direction of the bird if it collided 
                 for other_bird in other_birds:
                     if bird.intersects(other_bird.x,other_bird.y,other_bird.w,other_bird.h):
+                        # move back one pixel if colliding with zero velocity
+                        if other_bird.velocity_x == 0 and not bird.reached_screen_edge(self.screen_x,self.screen_y):
+                            bird.x += bird.velocity_x * -1
+                        if other_bird.velocity_y == 0 and not bird.reached_screen_edge(self.screen_x,self.screen_y):
+                            bird.y += bird.velocity_y * -1
+                        # move sideways if velocities are the same
+                        if bird.velocity_x == other_bird.velocity_x and not bird.reached_screen_edge(self.screen_x,self.screen_y):
+                            bird.y += bird.velocity_y
+                        if bird.velocity_y == other_bird.velocity_y and not bird.reached_screen_edge(self.screen_x,self.screen_y):
+                            bird.x += bird.velocity_x                        
+                        # swap velocities
                         bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
                         bird.velocity_y, other_bird.velocity_y = other_bird.velocity_y, bird.velocity_y
+                        
 
                 b += 1
 

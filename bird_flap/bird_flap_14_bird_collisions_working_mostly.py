@@ -1,14 +1,13 @@
 import pyxel
 import random
-import copy
 
-SCREEN_SIZE_X = 80
-SCREEN_SIZE_Y = 80
+SCREEN_SIZE_X = 60
+SCREEN_SIZE_Y = 60
 OUTSIDE_SCREEN_SPACE_X = 0
 OUTSIDE_SCREEN_SPACE_Y = 0
 BIRD_WIDTH = 8
 BIRD_HEIGHT = 8
-FPS = 15
+FPS = 12
 BACKGROUND_COLOR = 2
 
 
@@ -32,31 +31,27 @@ class Bird:
         else:
             self.velocity_y = random.randint(-1, 1)
 
-        self.facing = 1    # each bird starts facing left or right, depending on velocity on x axis
+        self.facing = self.face()    # each bird starts facing left or right, depending on velocity on x axis
 
-    # Copied intersects function from https://github.com/CaffeinatedTech/Python_Nibbles/blob/master/main.py
+    # Copied intersects algorithm from https://github.com/CaffeinatedTech/Python_Nibbles/blob/master/main.py
     def intersects(self, other_x, other_y, other_w, other_h):
-        is_intersected = False
         if (
             other_x + other_w >= self.x
             and self.x + self.w >= other_x
             and other_y + other_h >= self.y
             and self.y + self.h >= other_y
-        ):
-            is_intersected = True
-        return is_intersected
+            ):
+            return True
+        else:
+            return False
 
     def reached_screen_edge(self,screen_x,screen_y):
-        screen_edge_detected = False
         if self.x == 0 or self.x == screen_x:
-            # self.velocity_x *= -1
-            screen_edge_detected = True
-
-        if self.y == 0 or self.y == screen_y:
-            # self.velocity_y *= -1
-            screen_edge_detected = True
-
-        return screen_edge_detected
+            return True
+        elif self.y == 0 or self.y == screen_y:
+            return True
+        else:
+            return False
 
     def bounce_off_edge(self,screen_x,screen_y):
         if self.x == 0 and self.y >= 0 and self.y <= screen_y:
@@ -68,17 +63,18 @@ class Bird:
         if self.y == screen_y and self.x >= 0 and self.x <= screen_x:        
             self.velocity_y = 1   
 
+    def face(self):
+        if self.velocity_x != 0:
+            return self.velocity_x
+        else:
+            return self.velocity_y
+
     def move(self):
         # Choose next sprite in animation sequence (there are three frames)
         self.u = 8 * ((pyxel.frame_count + self.start_sprite) % 3)
 
-        # bird faces right when moving right and left when moving left
-        # but if it is only moving up or down, it faces right when going up 
-        # and left when going down
-        if self.velocity_x != 0:
-            self.facing = self.velocity_x
-        else:
-            self.facing = self.velocity_y
+        # set direction bird will face when moving
+        self.facing = self.face()
 
         # move bird
         self.x += self.velocity_x
@@ -92,8 +88,8 @@ class App:
     def __init__(self):
         pyxel.init(SCREEN_SIZE_X, SCREEN_SIZE_Y, fps=FPS)
         pyxel.load("../assets/platformer.pyxres")
-        self.screen_x = pyxel.width + OUTSIDE_SCREEN_SPACE_X - BIRD_WIDTH
-        self.screen_y = pyxel.height + OUTSIDE_SCREEN_SPACE_Y - BIRD_HEIGHT
+        self.screen_x = pyxel.width + (2 *OUTSIDE_SCREEN_SPACE_X) - BIRD_WIDTH
+        self.screen_y = pyxel.height + (2 * OUTSIDE_SCREEN_SPACE_Y) - BIRD_HEIGHT
         self.bird_list = []
         self.max_birds = ((pyxel.width // BIRD_WIDTH) * (pyxel.height // BIRD_HEIGHT))
         
@@ -127,7 +123,7 @@ class App:
 
     def remove_bird(self):
         if len(self.bird_list) > 0:
-            self.bird_list.pop()
+            self.bird_list.pop(0)
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
@@ -139,31 +135,26 @@ class App:
         if pyxel.btnp(pyxel.KEY_BACKSPACE):
             self.remove_bird()
 
-        if len(self.bird_list) == 1:
-            if self.bird_list[0].reached_screen_edge(self.screen_x,self.screen_y):
-                self.bird_list[0].bounce_off_edge(self.screen_x,self.screen_y)
-            self.bird_list[0].move()
-        else:
-            bird_count = len(self.bird_list)
-            b = 0
-            while b < bird_count:
-                # make temporary list that contains all other birds except the indexed bird
-                bird = self.bird_list[b]
-                other_birds = self.bird_list[:b] + self.bird_list[b + 1:]
+        # detect collisions and move birds
+        bird_count = len(self.bird_list)
+        b = 0
+        while b < bird_count:
+            # select bird from the bird list
+            bird = self.bird_list[b]
+            # make temporary list that contains all other birds
+            other_birds_list = [other_bird for other_bird in self.bird_list if bird != other_bird]
 
-                # Check if any other bird has collided with the bird
-                # Change direction of the bird if it collided 
-                for other_bird in other_birds:
-                    if bird.intersects(other_bird.x,other_bird.y,other_bird.w,other_bird.h):
-                        bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
-                        bird.velocity_y, other_bird.velocity_y = other_bird.velocity_y, bird.velocity_y
+            # Check if any other bird has collided with the bird
+            for other_bird in other_birds_list:
+                if bird.intersects(other_bird.x,other_bird.y,other_bird.w,other_bird.h): 
+                    bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
+                    bird.velocity_y, other_bird.velocity_y = other_bird.velocity_y, bird.velocity_y
 
-                b += 1
-
-                if bird.reached_screen_edge(self.screen_x,self.screen_y):
-                    bird.bounce_off_edge(self.screen_x,self.screen_y)
-                
-                bird.move()                
+            if bird.reached_screen_edge(self.screen_x,self.screen_y):
+                bird.bounce_off_edge(self.screen_x,self.screen_y)
+            
+            bird.move()
+            b += 1
 
     def draw(self):
         pyxel.cls(BACKGROUND_COLOR)
