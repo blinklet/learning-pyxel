@@ -227,3 +227,12 @@ App()
 ```
 
 Object-oriented programming constructs like classes makes it possible to write complex game programs. But, we can still create simple animations using only functions, which should give young programmers opportunities to develop fun little programs before, if they want to develop more complex games, they have to learn about Object-oriented programming.
+
+# Changes to make
+
+For new way of collision detection, try the following:
+https://deepnight.net/tutorial/a-simple-platformer-engine-part-2-collisions/
+
+
+https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
+
