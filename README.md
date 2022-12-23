@@ -226,9 +226,12 @@ class App:
 App()
 ```
 
-Object-oriented programming constructs like classes makes it possible to write complex game programs. But, we can still create simple animations using only functions, which should give young programmers opportunities to develop fun little programs before, if they want to develop more complex games, they have to learn about Object-oriented programming.
+Object-oriented programming makes it possible to write game Pyxel programs that contain more than a few sprites. However, beginner programmers may still create simple animations like the one shown above using only functions, which should give them opportunities to develop fun little programs before they have to learn about classes and Object-oriented programming.
 
 # Changes to make
+
+Add examples of collision detection from newer versions of programs, starting at *bird_flap_5_moving_classes.py*.
+
 
 For new way of collision detection, try the following:
 https://deepnight.net/tutorial/a-simple-platformer-engine-part-2-collisions/
