@@ -239,3 +239,11 @@ https://deepnight.net/tutorial/a-simple-platformer-engine-part-2-collisions/
 
 https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
 
+Also look at the following:
+
+https://spicyyoghurt.com/tutorials/html5-javascript-game-development/collision-detection-physics
+
+https://happycoding.io/tutorials/processing/collision-detection
+  - See chapter; "Collision Detection between Many Objects"
+
+
