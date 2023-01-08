@@ -247,3 +247,8 @@ https://happycoding.io/tutorials/processing/collision-detection
   - See chapter; "Collision Detection between Many Objects"
 
 
+2D collision detection using Numby:
+
+https://scipython.com/blog/two-dimensional-collisions/
+
+
