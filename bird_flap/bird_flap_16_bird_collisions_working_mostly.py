@@ -17,13 +17,15 @@ class Bird:
         self.x = x            # bird position on screen
         self.y = y            # bird position on screen
         self.img = 0          # image bank number from resource file
-        self.u = 0            # initial sprite position in image in resource file
-        self.v = 16           # initial sprite position in image in resource file
+        self.u = 0            # initial sprite horizontal position in image in resource file
+        self.v = 16           # initial sprite vertical position in image in resource file
+        self.flag = True
+        self.flag8 = True
         self.w = BIRD_WIDTH   # sprite width
         self.h = BIRD_HEIGHT  # sprite height
         self.col = 2          # sprite transparent color
 
-        self.collision_detected = False  # Flag to prevent bird detecting collision with two or more birds
+        self.previous_collision_detected = False  # Flag to prevent bird detecting collision with two or more birds
         self.start_sprite = random.randint(0,2)  # each bird starts at a random point in the sprite animation
         
         self.velocity_x = random.randint(-1, 1)  # each bird starts with a randomly-selected velocity (direction)
@@ -73,9 +75,14 @@ class Bird:
             return self.velocity_y
 
     def move(self):
-        # Choose next sprite in animation sequence (there are three frames)
-        self.u = 8 * ((pyxel.frame_count + self.start_sprite) % 3)
-
+        # Choose next sprite in animation sequence. There are three frames
+        # but we want to cycle back and forth across the frames so we want
+        # the frame sequence to be: 0, 1, 2, 1, 0, 1, 2, 1, 0,...
+        frame = (pyxel.frame_count + self.start_sprite) % 4
+        if frame == 3:
+            frame = 1
+        self.u = 8 * frame
+       
         # set direction bird will face when moving
         self.facing = self.face()
 
@@ -152,18 +159,18 @@ class App:
         # Check screen collision first (new velocity in bounce_off_edge function)
         for bird in self.bird_list:
             if bird.reached_screen_edge(self.screen_x,self.screen_y):
-                bird.collision_detected = True  # do not change direction after this collision, during this round
+                bird.previous_collision_detected = True  # do not change direction after this collision, during this round
                 bird.bounce_off_edge(self.screen_x,self.screen_y)
 
         for bird, other_bird in itertools.combinations(self.bird_list, 2):
-            if bird.collision_detected == False: 
+            if bird.previous_collision_detected == False: 
                 if bird.intersects(other_bird): 
-                    other_bird.collision_detected = True  # set collision flag on other birds where detected with current bird
+                    other_bird.previous_collision_detected = True  # set collision flag on other birds where detected with current bird
                     bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
                     bird.velocity_y, other_bird.velocity_y = other_bird.velocity_y, bird.velocity_y
         
         for bird in self.bird_list:
-            bird.collision_detected = False  # reset collisions on all birds
+            bird.previous_collision_detected = False  # reset collisions on all birds
             bird.move()
 
     def draw(self):
