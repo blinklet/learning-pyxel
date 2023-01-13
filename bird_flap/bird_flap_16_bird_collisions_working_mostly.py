@@ -19,8 +19,6 @@ class Bird:
         self.img = 0          # image bank number from resource file
         self.u = 0            # initial sprite horizontal position in image in resource file
         self.v = 16           # initial sprite vertical position in image in resource file
-        self.flag = True
-        self.flag8 = True
         self.w = BIRD_WIDTH   # sprite width
         self.h = BIRD_HEIGHT  # sprite height
         self.col = 2          # sprite transparent color
@@ -155,6 +153,8 @@ class App:
         # See https://stackoverflow.com/questions/16603282/how-to-compare-each-item-in-a-list-with-the-rest-only-once
         # for examples of various ways to compare items in a list (without multiple comparisons)
         # https://docs.python.org/3/library/itertools.html#itertools.combinations
+        #
+        # maybe try different approach: https://gamedev.net/forums/topic/701045-axis-aligned-rectangle-collision-handling/5400917/
 
         # Check screen collision first (new velocity in bounce_off_edge function)
         for bird in self.bird_list:
@@ -163,7 +163,7 @@ class App:
                 bird.bounce_off_edge(self.screen_x,self.screen_y)
 
         for bird, other_bird in itertools.combinations(self.bird_list, 2):
-            if bird.previous_collision_detected == False: 
+            if other_bird.previous_collision_detected == False: 
                 if bird.intersects(other_bird): 
                     other_bird.previous_collision_detected = True  # set collision flag on other birds where detected with current bird
                     bird.velocity_x, other_bird.velocity_x = other_bird.velocity_x, bird.velocity_x
