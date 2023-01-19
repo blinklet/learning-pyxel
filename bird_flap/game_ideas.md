@@ -35,6 +35,7 @@ Change logic so game clock is multiplied
 More "Pyxel"-related tech:
 --------------------------
 Add background showing ground and sky
+  -- add moving clouds, etc
 Add music and sound effects
 
 

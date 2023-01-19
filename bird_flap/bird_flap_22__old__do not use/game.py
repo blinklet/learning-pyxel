@@ -29,9 +29,6 @@ def get_height():
             height_list.append(int(inspect.getattr_static(obj,"SPRITE_HEIGHT")))
     return max(height_list)
 
-print(get_speed())
-print(get_width())
-print(get_height())
 
 ASSET_FILE = "../../assets/platformer.pyxres"
 SCREEN_SIZE_X = 60
@@ -42,7 +39,7 @@ LARGEST_SPRITE_WIDTH = get_width()
 LARGEST_SPRITE_HEIGHT = get_height()
 MAX_SPRITES_FACTOR = 0.45
 MAX_SPRITE_SPEED = get_speed()
-FPS = 60
+FPS = 15
 BACKGROUND_COLOR = 2
 
 clock_fps = FPS * MAX_SPRITE_SPEED
@@ -51,8 +48,8 @@ class App:
     def __init__(self):
         pyxel.init(SCREEN_SIZE_X, SCREEN_SIZE_Y, fps=clock_fps)
         pyxel.load(ASSET_FILE)
-        self.screen_x = pyxel.width + (2 *OUTSIDE_SCREEN_SPACE_X) - LARGEST_SPRITE_WIDTH
-        self.screen_y = pyxel.height + (2 * OUTSIDE_SCREEN_SPACE_Y) - LARGEST_SPRITE_HEIGHT
+        self.screen_x = pyxel.width + (2 *OUTSIDE_SCREEN_SPACE_X)
+        self.screen_y = pyxel.height + (2 * OUTSIDE_SCREEN_SPACE_Y)
         self.sprite_list = []
         self.max_sprites = ((pyxel.width // LARGEST_SPRITE_WIDTH) * (pyxel.height // LARGEST_SPRITE_HEIGHT)) * MAX_SPRITES_FACTOR
         
@@ -63,7 +60,8 @@ class App:
         pyxel.run(self.update, self.draw)
 
     def generate_sprite(self, sprite_type):
-        # Create new sprite in random position
+        # Create new sprite in random position start with even-numbered points to smooth
+        # diagonal motion at start (but does not ensure smooth diagonal motion after collision )
         if sprite_type == "bird":
             new_bird_x = random.randint(1, pyxel.width - game_sprites.Bird.SPRITE_WIDTH - 1)
             new_bird_y = random.randint(1, pyxel.height - game_sprites.Bird.SPRITE_WIDTH - 1)
@@ -151,8 +149,7 @@ class App:
         
         for sprite in self.sprite_list:
             sprite.previous_collision_detected = False  # reset collisions on all birds
-            print("x", sprite.velocity_x)
-            print("y", sprite.velocity_y)
+            sprite.fix_jitter()
             sprite.move()
 
     def draw(self):

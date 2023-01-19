@@ -5,9 +5,9 @@ class Sprite:
     SPRITE_WIDTH = 8
     SPRITE_HEIGHT = 8
     SPRITE_SPEED = 1
-    def __init__(self, x, y, animate_speed):
-        self.x = x            # sprite position on pixelated screen
-        self.y = y       # sprite position on pixelated screen
+    def __init__(self, x, y, animate_speed, fps):
+        self.x = int(x)            # sprite position on pixelated screen
+        self.y = int(y)            # sprite position on pixelated screen
         self.img = 0          # image bank number from resource file
         self.u = 1            # initial sprite horizontal position in image in resource file
         self.v = 9            # initial sprite vertical position in image in resource file
@@ -74,29 +74,11 @@ class Sprite:
             return -1
 
     def move(self):
-        # Choose next Bird in animation sequence. There are three bird frames
-        # but we want to cycle back and forth across the frames so we want
-        # the frame sequence to be: 0, 1, 2, 1, 0, 1, 2, 1, 0,...
-        
-        if self.animate_clock % self.animation_size == 0:
-            self.frame = self.frame + 1
-            self.animate_clock = self.animation_size
-        if self.frame > self.animation_size -1:
-            self.frame = 0
-        self.u = 8 * self.sequence[self.frame]
-        self.animate_clock = self.animate_clock - 1
-
-        # set direction bird will face when moving
-        self.facing = self.face()
-
-        # move bird
+        # This is a very basic move function
+        # Each sprite will have it's own move method which will
+        # be defined in the sprite's subclass
         self.x += self.velocity_x
         self.y -= self.velocity_y
-        # print("real x", self.real_x)
-        # print("x", self.x)
-        # print("real y", self.real_y)
-        # print("y", self.y)
-        # print()
 
     def draw(self):
         pyxel.blt(self.x, self.y, self.img, self.u, self.v, self.w * self.facing, self.h, self.col)

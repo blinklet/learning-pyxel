@@ -6,8 +6,12 @@ class Sprite:
     SPRITE_HEIGHT = 8
     SPRITE_SPEED = 1
     def __init__(self, x, y, animate_speed):
-        self.x = x            # sprite position on pixelated screen
-        self.y = y       # sprite position on pixelated screen
+        self.x = int(x)            # sprite position on pixelated screen
+        self.y = int(y)            # sprite position on pixelated screen
+        self.real_x = x       # sprite's real position in sub-pixel resolution
+        self.real_y = y       # sprite's real position in sub-pixel resolution
+        self.old_x = x        # sprite's previous real position on screen (used in de-jitter calculations)
+        self.old_y = y        # sprite's previous real position on screen (used in de-jitter calculations)
         self.img = 0          # image bank number from resource file
         self.u = 1            # initial sprite horizontal position in image in resource file
         self.v = 9            # initial sprite vertical position in image in resource file
@@ -72,31 +76,39 @@ class Sprite:
             return 1
         if self.velocity_x < 0:
             return -1
+            
+    def fix_jitter(self):
+        if abs(self.velocity_x > 0) and abs(self.velocity_y > 0):  # if moving diagonally
+            if abs(self.old_x - self.real_x) > abs(self.old_y - self.y): 
+                x = round(self.x)
+                y = round(self.y + (x - self.x) * self.velocity_y / self.velocity_x)
+                self.y = y
+            elif abs(self.old_x - self.x) <= abs(self.old_y - self.y):
+                y = round(self.y)
+                x = round(self.x + (y - self.y) * self.velocity_x / self.velocity_y)
+                self.x = x
 
     def move(self):
-        # Choose next Bird in animation sequence. There are three bird frames
-        # but we want to cycle back and forth across the frames so we want
-        # the frame sequence to be: 0, 1, 2, 1, 0, 1, 2, 1, 0,...
-        
-        if self.animate_clock % self.animation_size == 0:
-            self.frame = self.frame + 1
-            self.animate_clock = self.animation_size
-        if self.frame > self.animation_size -1:
-            self.frame = 0
-        self.u = 8 * self.sequence[self.frame]
-        self.animate_clock = self.animate_clock - 1
-
-        # set direction bird will face when moving
-        self.facing = self.face()
-
-        # move bird
+        # This is a very basic move function
+        # Each sprite will have it's own move method which will
+        # be defined in the sprite's subclass
+        self.old_x = self.x
+        self.old_y = self.real_y
+        self.real_x += self.velocity_x
+        self.real_y += self.velocity_y
         self.x += self.velocity_x
         self.y -= self.velocity_y
-        # print("real x", self.real_x)
-        # print("x", self.x)
-        # print("real y", self.real_y)
-        # print("y", self.y)
-        # print()
+
+    # def fix_jitter(self):
+    #     if abs(self.velocity_x > 0) or abs(self.velocity_y > 0):
+    #         if abs(self.old_x - self.x) > abs(self.old_y - self.y): 
+    #             x = round(self.x)
+    #             y = round(self.y + (x - self.x) * self.velocity_y / self.velocity_x)
+    #             self.y = y
+    #         elif abs(self.old_x - self.x) <= abs(self.old_y - self.y):
+    #             y = round(self.y)
+    #             x = round(self.x + (y - self.y) * self.velocity_x / self.velocity_y)
+    #             self.x = x
 
     def draw(self):
         pyxel.blt(self.x, self.y, self.img, self.u, self.v, self.w * self.facing, self.h, self.col)

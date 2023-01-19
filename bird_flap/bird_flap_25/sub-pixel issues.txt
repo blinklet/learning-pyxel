@@ -1,0 +1,60 @@
+# Try the following
+
+extends KinematicBody2D
+
+export (int) var speed = 10
+
+var velocity = Vector2() var x = position.x var y = position.y var oldx = position.x var oldy = position.y
+
+func get_input(): velocity = Vector2() if Input.is_action_pressed('right'): velocity.x += 1 if Input.is_action_pressed('left'): velocity.x -= 1 if Input.is_action_pressed('down'): velocity.y += 1 if Input.is_action_pressed('up'): velocity.y -= 1 velocity = velocity.normalized()
+
+func _physics_process(delta): oldx = position.x oldy = position.y get_input() move_and_slide(velocity * speed)
+
+if velocity:
+    if abs(oldx - position.x) > abs(oldy - position.y): 
+        x = round(position.x)
+        y = round(position.y + (x - position.x) * velocity.y / velocity.x)
+        position.y = y
+    elif abs(oldx - position.x) <= abs(oldy - position.y):
+        y = round(position.y)
+        x = round(position.x + (y - position.y) * velocity.x / velocity.y)
+        position.x = x
+
+
+# Also try:
+Search "agorithm smooth sub-pixel movement diagonal"
+https://laroldsjubilantjunkyard.com/tutorials/how-to-make-a-gameboy-game/smooth-movement-using-sub-pixel-resolution/
+https://laroldsjubilantjunkyard.com/ is a great resource for Pixel game programming
+
+
+
+           (13.5,51.5)(14.0,51.0)(14.5,50.5)(15.0,40.0)
+instead of (13,  51  )(14,  51  )(14,  50  )(15,  50  )
+need       (13,  51  )(13,  51  )(14,  50  )(14,  50  )
+
+
+      
+int(abs(13.0)) - abs(13.5) = 0.5
+int(abs(13.5)) - abs(14.0) = 1.0
+int(abs(14.0)) - abs(14.5) = 0.5
+int(abs(14.5)) - abs(15.0) = 1.0
+
+int(abs(13.0)) - abs(13.33) = 0.33
+int(abs(13.33)) - abs(13.67) = 0.67
+int(abs(13.67)) - abs(14.0) = 1.0
+int(abs(14.0)) - abs(14.33) = 0.33
+int(abs(14.33)) - abs(14.67) = 0.67
+int(abs(14.67)) - abs(15.0) = 1.0
+
+abs(13.0)) - int(abs(13.5)) = 0
+abs(13.5)) - int(abs(14.0)) = 0.5
+abs(14.0)) - int(abs(14.5)) = 0
+abs(14.5)) - int(abs(15.0)) = 0.5
+
+abs(13.0) - int(abs(13.33)) = 0
+abs(13.33) - int(abs(13.67)) = 0.33
+abs(13.67) - int(abs(14.0)) = 0.67
+abs(14.0) - int(abs(14.33)) = 0
+abs(14.33) - int(abs(14.67)) = 0.33
+abs(14.67) - int(abs(15.0)) = 0.67
+
