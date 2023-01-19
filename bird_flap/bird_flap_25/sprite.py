@@ -6,7 +6,7 @@ class Sprite:
     # Class attributes used in game program to find properties of the class
     SPRITE_WIDTH = 6
     SPRITE_HEIGHT = 6
-    SPRITE_SPEED = 3
+    SPRITE_SPEED = 0
     SPRITE_FPS = 3            # animation frame rate
 
     def __init__(self, x, y, fastest_sprite_speed, game_fps):
@@ -32,11 +32,15 @@ class Sprite:
         self.velocity_y = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
         
         # avoid motionless sprites
-        while self.velocity_x == 0 and self.velocity_y == 0:
-            print('Motionless sprite. Resetting velocity')
-            self.velocity_x = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
-            self.velocity_y = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
-            
+        if self.SPRITE_SPEED == 0:
+            self.velocity_x = 0
+            self.velocity_y = 0
+        else:
+            while self.velocity_x == 0 and self.velocity_y == 0:
+                print('Motionless sprite. Resetting velocity')
+                self.velocity_x = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
+                self.velocity_y = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
+                
         # each sprite starts facing left or right, depending on velocity on x axis
         self.facing = self.face()
 
