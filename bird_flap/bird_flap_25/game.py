@@ -5,6 +5,17 @@ import game_sprites
 import inspect
 import math
 
+
+SCREEN_SIZE_X = 60
+SCREEN_SIZE_Y = 60
+FPS = 20
+# FPS must be higher than each sprite's SPRITE_FPS value. 
+# The fastest sprite will appear to travel at the FPS speed.
+# Every other sprite travels at (SPRITE_SPEED/MAX_SPRITE_SPEED)*FPS speed
+BACKGROUND_COLOR = 2
+ASSET_FILE = "../../assets/platformer.pyxres"
+MAX_SPRITES_FACTOR = 0.45
+
 # Get highest speed factor from defined game_sprites classes
 def get_speed():
     speed_list = []
@@ -29,22 +40,13 @@ def get_height():
             height_list.append(int(inspect.getattr_static(obj,"SPRITE_HEIGHT")))
     return max(height_list)
 
-SCREEN_SIZE_X = 60
-SCREEN_SIZE_Y = 60
-FPS = 10    # FPS must be higher than each sprite's
-            # SPRITE_FPS value. 
-            # The fastest sprite will appear to travel
-            # at the FPS speed
-
-ASSET_FILE = "../../assets/platformer.pyxres"
 LARGEST_SPRITE_WIDTH = get_width()
 LARGEST_SPRITE_HEIGHT = get_height()
-MAX_SPRITES_FACTOR = 0.45
 MAX_SPRITE_SPEED = get_speed()
-BACKGROUND_COLOR = 2
+
 
 clock_fps = FPS 
-fps = math.ceil(FPS / MAX_SPRITE_SPEED)
+base_fps = math.ceil(FPS / MAX_SPRITE_SPEED)
 
 class App:
     def __init__(self):
@@ -62,15 +64,15 @@ class App:
         if sprite_type == "bird":
             new_bird_x = random.randint(1, pyxel.width - game_sprites.Bird.SPRITE_WIDTH - 1)
             new_bird_y = random.randint(1, pyxel.height - game_sprites.Bird.SPRITE_HEIGHT - 1)
-            return(game_sprites.Bird(new_bird_x, new_bird_y, MAX_SPRITE_SPEED, fps))
+            return(game_sprites.Bird(new_bird_x, new_bird_y, MAX_SPRITE_SPEED, base_fps))
         if sprite_type == "ball":
             new_ball_x = random.randint(1, pyxel.width - game_sprites.Ball.SPRITE_WIDTH - 1)
             new_ball_y = random.randint(1, pyxel.height - game_sprites.Ball.SPRITE_HEIGHT - 1)
-            return(game_sprites.Ball(new_ball_x, new_ball_y, MAX_SPRITE_SPEED, fps))
+            return(game_sprites.Ball(new_ball_x, new_ball_y, MAX_SPRITE_SPEED, base_fps))
         if sprite_type == "sprite":
             new_sprite_x = random.randint(1, pyxel.width - game_sprites.Sprite.SPRITE_WIDTH - 1)
             new_sprite_y = random.randint(1, pyxel.height - game_sprites.Sprite.SPRITE_HEIGHT - 1)
-            return(game_sprites.Sprite(new_sprite_x, new_sprite_y, MAX_SPRITE_SPEED, fps))
+            return(game_sprites.Sprite(new_sprite_x, new_sprite_y, MAX_SPRITE_SPEED, base_fps))
 
     def add_new_sprite(self, sprite_type):
         # Create new sprite in random position

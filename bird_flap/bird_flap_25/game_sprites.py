@@ -16,7 +16,7 @@ class Bird(Sprite):
 class Ball(Sprite):
     SPRITE_WIDTH = 6
     SPRITE_HEIGHT = 6
-    SPRITE_SPEED = 1.5
+    SPRITE_SPEED = 2
     SPRITE_FPS = 2            # animation frame rate
     def __init__(self, x, y, fastest_sprite_speed, game_fps):
         Sprite.__init__(self, x, y, fastest_sprite_speed, game_fps)

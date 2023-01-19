@@ -6,7 +6,7 @@ class Sprite:
     # Class attributes used in game program to find properties of the class
     SPRITE_WIDTH = 6
     SPRITE_HEIGHT = 6
-    SPRITE_SPEED = 2
+    SPRITE_SPEED = 3
     SPRITE_FPS = 3            # animation frame rate
 
     def __init__(self, x, y, fastest_sprite_speed, game_fps):
