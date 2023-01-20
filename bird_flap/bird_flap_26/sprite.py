@@ -1,6 +1,7 @@
 import pyxel
 import random
 import math
+import decimal
 
 class Sprite:
     # Class attributes used in game program to find properties of the class
@@ -103,18 +104,34 @@ class Sprite:
             test_x = abs(int(self.old_x) - int(self.x))
             test_y = abs(int(self.old_y) - int(self.y))
             if test_x != test_y:   # if jitter exists
-                if direction in ["up-right","up-left"]:
-                    print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
-                    return math.ceil(self.x), int(self.y)  # round up X, round down Y
-                elif direction in ["down-right","down-left"]:
-                    print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
-                    return int(self.x), math.ceil(self.y)  # round down X, round up Y
+                if direction == "up-right":
+                    self.x = self.x + (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
+                    # print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
+                    # return math.ceil(self.x), int(self.y)  # round up X, round down Y
+                    return self.x, self.y
+                elif direction == "up-left":
+                    self.x = self.x - (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
+                    # print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
+                    # return math.ceil(self.x), int(self.y)  # round up X, round down Y
+                    return self.x, self.y
+                elif direction == "down-right":
+                    self.x = self.x + (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
+                    # print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
+                    # return int(self.x), math.ceil(self.y)  # round down X, round up Y
+                    return self.x, self.y
+                elif direction =="down-left":
+                    self.x = self.x - (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
+                    # print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
+                    # return int(self.x), math.ceil(self.y)  # round down X, round up Y
+                    return self.x, self.y
             else:
-                print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
-                return int(self.x), int(self.y)  # round everything down
+                # print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
+                # return int(self.x), int(self.y)  # round everything down
+                return self.x, self.y
         else:
-            print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
-            return int(self.x), int(self.y)  # round everything down
+            # print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
+            # return int(self.x), int(self.y)  # round everything down
+            return self.x, self.y
 
     def face(self):
         if self.velocity_x == 0:

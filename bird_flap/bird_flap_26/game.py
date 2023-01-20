@@ -6,9 +6,9 @@ import inspect
 import math
 
 
-SCREEN_SIZE_X = 40
-SCREEN_SIZE_Y = 40
-FPS = 4
+SCREEN_SIZE_X = 80
+SCREEN_SIZE_Y = 80
+FPS = 20
 # FPS must be higher than each sprite's SPRITE_FPS value. 
 # The fastest sprite will appear to travel at the FPS speed.
 # Every other sprite travels slower, 

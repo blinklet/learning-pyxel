@@ -120,7 +120,7 @@ def smooth(self):
     if direction in ["up-right","up-left","down-right","down-left"]:
         test_x = abs(int(old_x) - int(new_x))
         test_y = abs(int(old_y) - int(new_y))
-        if test_x <> test_y:   # if delta exists
+        if test_x != test_y:   # if delta exists
             if direction in ["up-right","up-left"]:
                 return(math.ceil(self.x), int(self.y)) # round up X, round down Y
             elif direction in ["down-right","down-left"]:
@@ -139,31 +139,31 @@ Maybe switch to fractions?
 down-right real: 6.333333333333333 20.333333333333332 disp 6 20   
 down-right real: 6.666666666666666 20.666666666666664 disp 6 20
 down-right real: 6.999999999999999 20.999999999999996 disp 6 20   should be real: 7.0 and 21.0
-down-right real: 7.333333333333332 21.33333333333333 disp 7 21
+down-right real: 7.333333333333332 21.33333333333333 disp 7 21    JITTER
 down-right real: 7.666666666666665 21.66666666666666 disp 7 21
 down-right real: 7.999999999999998 21.999999999999993 disp 7 21    should be real: 8.0 and 22.0
 down-right real: 8.333333333333332 22.333333333333325 disp 8 22
 down-right real: 8.666666666666666 22.666666666666657 disp 8 22
-down-right real: 9.0 22.99999999999999 disp 9 23                  fractions are not exact so jitter is detected and wrong rounding done
-down-right real: 9.333333333333334 23.33333333333332 disp 9 24     fractions are not exact so jitter is detected
+down-right real: 9.0 22.99999999999999                disp 9 23     JITTER        fractions are not exact so jitter is detected and wrong rounding done
+down-right real: 9.333333333333334 23.33333333333332 disp 9 24      JITTER fractions are not exact so jitter is detected
 down-right real: 9.666666666666668 23.666666666666654 disp 9 23
-down-right real: 10.000000000000002 23.999999999999986 disp 10 24   fractions are not exact so jitter is detected
-down-right real: 10.333333333333336 24.333333333333318 disp 10 25
+down-right real: 10.000000000000002 23.999999999999986 disp 10 24    JITTER fractions are not exact so jitter is detected
+down-right real: 10.333333333333336 24.333333333333318 disp 10 25    JITTER
 down-right real: 10.66666666666667 24.66666666666665 disp 10 24
-down-right real: 11.000000000000004 24.999999999999982 disp 11 25
-down-right real: 11.333333333333337 25.333333333333314 disp 11 26
+down-right real: 11.000000000000004 24.999999999999982 disp 11 25    JITTER
+down-right real: 11.333333333333337 25.333333333333314 disp 11 26    JITTER
 down-right real: 11.666666666666671 25.666666666666647 disp 11 25
-down-right real: 12.000000000000005 25.99999999999998 disp 12 26
-down-right real: 12.33333333333334 26.33333333333331 disp 12 27
+down-right real: 12.000000000000005 25.99999999999998 disp 12 26    JITTER   should be natural 26  this causes jitter to be detected
+down-right real: 12.33333333333334 26.33333333333331 disp 12 27    JITTER
 down-right real: 12.666666666666673 26.666666666666643 disp 12 26
-down-right real: 13.000000000000007 26.999999999999975 disp 13 27
-down-right real: 13.333333333333341 27.333333333333307 disp 13 28
+down-right real: 13.000000000000007 26.999999999999975 disp 13 27    JITTER   should be natural 27
+down-right real: 13.333333333333341 27.333333333333307 disp 13 28    JITTER
 down-right real: 13.666666666666675 27.66666666666664 disp 13 27
-down-right real: 14.000000000000009 27.99999999999997 disp 14 28
-down-right real: 14.333333333333343 28.333333333333304 disp 14 29
+down-right real: 14.000000000000009 27.99999999999997 disp 14 28    JITTER   should be natural 28
+down-right real: 14.333333333333343 28.333333333333304 disp 14 29    JITTER
 down-right real: 14.666666666666677 28.666666666666636 disp 14 28
-down-right real: 15.00000000000001 28.999999999999968 disp 15 29
-down-right real: 15.333333333333345 29.3333333333333 disp 15 30
+down-right real: 15.00000000000001 28.999999999999968 disp 15 29    JITTER should be natural 29
+down-right real: 15.333333333333345 29.3333333333333 disp 15 30    JITTER
 down-right real: 15.666666666666679 29.666666666666632 disp 15 29
 down-right real: 16.00000000000001 29.999999999999964 disp 16 30
 down-right real: 16.333333333333343 30.333333333333297 disp 16 31
@@ -239,3 +239,65 @@ down-left real: 7.333333333333331 6.000000000000005 disp 7 7
 down-left real: 6.999999999999998 6.333333333333338 disp 6 7
 down-left real: 6.666666666666665 6.666666666666671 disp 6 6
 down-left real: 6.333333333333332 7.000000000000004 disp 6 8
+
+
+Looking at bird = 1, ball = 4
+
+if jitter, round down X, round up Y
+down-right real: 13.25 25.25 disp 13 25
+down-right real: 13.5 25.5 disp 13 25
+down-right real: 13.75 25.75 disp 13 25
+down-right real: 14.0 26.0 disp 14 26
+down-right real: 14.25 26.25 disp 14 26
+down-right real: 14.5 26.5 disp 14 26
+down-right real: 14.75 26.75 disp 14 26
+down-right real: 15.0 27.0 disp 15 27
+down-right real: 15.25 27.25 disp 15 27
+down-right real: 15.5 27.5 disp 15 27
+down-right real: 15.75 27.75 disp 15 27
+
+if jitter, round up X, round down Y
+up-right real: 20.25 31.75 disp 21 31   jitter?????
+up-right real: 20.5 31.5   disp 20 31
+up-right real: 20.75 31.25 disp 20 31
+up-right real: 21.0 31.0   disp 21 31   jitter?????
+up-right real: 21.25 30.75 disp 22 30   jitter?????
+up-right real: 21.5 30.5   disp 21 30
+up-right real: 21.75 30.25 disp 21 30
+up-right real: 22.0 30.0   disp 22 30   jitter?????
+up-right real: 22.25 29.75 disp 23 29   jitter?????
+up-right real: 22.5 29.5   disp 22 29
+up-right real: 22.75 29.25 disp 22 29
+up-right real: 23.0 29.0   disp 23 29   jitter?????
+up-right real: 23.25 28.75 disp 24 28   jitter?????
+up-right real: 23.5 28.5   disp 23 28
+up-right real: 23.75 28.25 disp 23 28
+up-right real: 24.0 28.0   disp 24 28
+up-right real: 24.25 27.75 disp 25 27
+up-right real: 24.5 27.5   disp 24 27
+up-right real: 24.75 27.25 disp 24 27
+up-right real: 25.0 27.0   disp 25 27
+up-right real: 25.25 26.75 disp 26 26
+up-right real: 25.5 26.5   disp 25 26
+up-right real: 25.75 26.25 disp 25 26
+up-right real: 26.0 26.0   disp 26 26
+up-right real: 26.25 25.75 disp 27 25
+up-right real: 26.5 25.5   disp 26 25
+up-right real: 26.75 25.25 disp 26 25
+up-right real: 27.0 25.0   disp 27 25
+up-right real: 27.25 24.75 disp 28 24
+
+Usr Fractions: (but they won't solve the jitter offset issue when ratios different than 1:2)
+
+def smooth(self):
+    direction = find_direction()
+    if direction in ["up-right","up-left","down-right","down-left"]:
+        test_x = abs(int(old_x) - int(new_x))
+        test_y = abs(int(old_y) - int(new_y))
+        if test_x != test_y:   # if delta exists
+            if direction in ["up-right","up-left"]:
+                return(math.ceil(self.x), int(self.y)) # round up X, round down Y
+            elif direction in ["down-right","down-left"]:
+                return(int(self.x), math.ceil(self.y)) # round down X, round up Y
+            else:
+                return(int(self.x), int(self.y)) # round everything down
