@@ -289,15 +289,85 @@ up-right real: 27.25 24.75 disp 28 24
 
 Usr Fractions: (but they won't solve the jitter offset issue when ratios different than 1:2)
 
-def smooth(self):
-    direction = find_direction()
-    if direction in ["up-right","up-left","down-right","down-left"]:
-        test_x = abs(int(old_x) - int(new_x))
-        test_y = abs(int(old_y) - int(new_y))
-        if test_x != test_y:   # if delta exists
-            if direction in ["up-right","up-left"]:
-                return(math.ceil(self.x), int(self.y)) # round up X, round down Y
-            elif direction in ["down-right","down-left"]:
-                return(int(self.x), math.ceil(self.y)) # round down X, round up Y
+(solved)
+in sprite.py:
+self.speed_ratio = Fraction(self.SPRITE_SPEED, fastest_sprite_speed)
+and
+self.velocity_x = random.randint(-1, 1) * self.speed_ratio
+self.velocity_y = random.randint(-1, 1) * self.speed_ratio
+
+Great.
+Still get jitter at some speed ratios (like 1:4)
+
+down-left real: 57/2 99/2    disp 28 49
+down-left real: 113/4 199/4  disp 28 49
+down-left real: 28 50        disp 28 50
+down-left real: 111/4 201/4  disp 27 51   **
+down-left real: 55/2 101/2   disp 27 50
+down-left real: 109/4 203/4  disp 27 50
+down-left real: 27 51        disp 27 51
+down-left real: 107/4 205/4  disp 26 52   ** detected Jitter and rounded up
+down-left real: 53/2 103/2   disp 26 51
+down-left real: 105/4 207/4  disp 26 51
+down-left real: 26 52        disp 26 52
+down-left real: 103/4 209/4  disp 25 53   ** detected Jitter and rounded up
+down-left real: 51/2 105/2   disp 25 52
+down-left real: 101/4 211/4  disp 25 52
+down-left real: 25 53        disp 25 53  
+down-left real: 99/4 213/4   disp 24 54   ** detected Jitter and rounded up
+down-left real: 49/2 107/2   disp 24 53
+down-left real: 97/4 215/4   disp 24 53
+down-left real: 24 54        disp 24 54
+down-left real: 95/4 217/4   disp 23 55   ** detected Jitter and rounded up
+down-left real: 47/2 109/2   disp 23 54
+down-left real: 93/4 219/4   disp 23 54
+        
+
+
+
+
+            def smooth(self):
+        # returns displayable x and y values that do not cause jitter
+        direction = self.find_direction()
+        if direction in ["up-right","up-left","down-right","down-left"]:
+            test_x = abs(abs(int(self.old_x)) - abs(int(self.x)))
+            test_y = abs(abs(int(self.old_y)) - abs(int(self.y)))
+            x_fract = self.x - int(self.x)
+            y_fract = self.y - int(self.y)
+            if x_fract = y_fract:
+                return self.x, self.y
             else:
-                return(int(self.x), int(self.y)) # round everything down
+                
+
+            if test_x != test_y:   # if jitter exists
+                if direction == "up-right":
+                    #self.y = self.y + self.speed_ratio # change x speed to sync up jitter
+                    
+
+                    print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
+                    return math.ceil(self.x), int(self.y)  # round up X, round down Y
+                    #return self.x, self.y
+                elif direction == "up-left":
+                    #self.x = self.x - self.speed_ratio # change x speed to sync up jitter
+                    print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
+                    return math.ceil(self.x), int(self.y)  # round up X, round down Y
+                    #return self.x, self.y
+                elif direction == "down-right":
+                    #self.x = self.x + self.speed_ratio # change x speed to sync up jitter
+                    print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
+                    return int(self.x), math.ceil(self.y)  # round down X, round up Y
+                    #return self.x, self.y
+                elif direction =="down-left":
+                    #self.x = self.x - self.speed_ratio # change x speed to sync up jitter
+                    print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
+                    return int(self.x), math.ceil(self.y)  # round down X, round up Y
+                    #return self.x, self.y
+            else:
+                print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
+                return int(self.x), int(self.y)  # round everything down
+                #return self.x, self.y
+        else:
+            print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
+            return int(self.x), int(self.y)  # round everything down
+            #return self.x, self.y
+            

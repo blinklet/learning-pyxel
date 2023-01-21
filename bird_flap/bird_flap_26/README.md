@@ -11,6 +11,8 @@ but seemed to cause more sprites sticking to each other
 Should go back to rounding solution
 but how to solve the cycle of bad jitter detections?
 
+(solved) the sprite to max sprite speed ratio is now a Fraction object. This allows precis ratios that will add up to whole numbers when expected
+
 
 (maybe remove jitter logic until future and focu on other game mechanics)
 

@@ -1,7 +1,7 @@
+from fractions import Fraction
 import pyxel
 import random
 import math
-import decimal
 
 class Sprite:
     # Class attributes used in game program to find properties of the class
@@ -30,9 +30,11 @@ class Sprite:
         
         self.previous_collision_detected = False  # Flag to prevent sprite detecting collision with two or more sprites
         
+        self.speed_ratio = Fraction(self.SPRITE_SPEED, fastest_sprite_speed)
+
         # each sprite starts with a randomly-selected velocity (direction)
-        self.velocity_x = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
-        self.velocity_y = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
+        self.velocity_x = random.randint(-1, 1) * self.speed_ratio
+        self.velocity_y = random.randint(-1, 1) * self.speed_ratio
         
         # avoid motionless sprites
         if self.SPRITE_SPEED == 0:
@@ -41,8 +43,8 @@ class Sprite:
         else:
             while self.velocity_x == 0 and self.velocity_y == 0:
                 print('Motionless sprite. Resetting velocity')
-                self.velocity_x = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
-                self.velocity_y = random.randint(-1, 1) * (self.SPRITE_SPEED / fastest_sprite_speed)
+                self.velocity_x = random.randint(-1, 1) * self.speed_ratio
+                self.velocity_y = random.randint(-1, 1) * self.speed_ratio
                 
         # each sprite starts facing left or right, depending on velocity on x axis
         self.facing = self.face()
@@ -78,6 +80,7 @@ class Sprite:
             self.velocity_y = abs(self.velocity_y) 
 
     def find_direction(self):
+        # Currently not used but I am keeping it for testing code
         if self.velocity_x > 0 and self.velocity_y > 0:
             return("up-right")
         elif self.velocity_x < 0 and self.velocity_y > 0:
@@ -96,42 +99,6 @@ class Sprite:
             return("left")
         else:
             return("stationary")
-
-    def smooth(self):
-        # returns displayable x and y values that do not cause jitter
-        direction = self.find_direction()
-        if direction in ["up-right","up-left","down-right","down-left"]:
-            test_x = abs(int(self.old_x) - int(self.x))
-            test_y = abs(int(self.old_y) - int(self.y))
-            if test_x != test_y:   # if jitter exists
-                if direction == "up-right":
-                    self.x = self.x + (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
-                    # print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
-                    # return math.ceil(self.x), int(self.y)  # round up X, round down Y
-                    return self.x, self.y
-                elif direction == "up-left":
-                    self.x = self.x - (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
-                    # print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
-                    # return math.ceil(self.x), int(self.y)  # round up X, round down Y
-                    return self.x, self.y
-                elif direction == "down-right":
-                    self.x = self.x + (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
-                    # print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
-                    # return int(self.x), math.ceil(self.y)  # round down X, round up Y
-                    return self.x, self.y
-                elif direction =="down-left":
-                    self.x = self.x - (self.SPRITE_SPEED/self.fastest_sprite_speed) # change x speed to sync up jitter
-                    # print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
-                    # return int(self.x), math.ceil(self.y)  # round down X, round up Y
-                    return self.x, self.y
-            else:
-                # print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
-                # return int(self.x), int(self.y)  # round everything down
-                return self.x, self.y
-        else:
-            # print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
-            # return int(self.x), int(self.y)  # round everything down
-            return self.x, self.y
 
     def face(self):
         if self.velocity_x == 0:
@@ -167,6 +134,5 @@ class Sprite:
 
     def draw(self):
         self.width = self.w * self.facing 
-        xx, yy = self.smooth()
-        pyxel.blt(xx, yy, self.img, self.u, self.v, self.width, self.h, self.col)
+        pyxel.blt(self.x, self.y, self.img, self.u, self.v, self.width, self.h, self.col)
 

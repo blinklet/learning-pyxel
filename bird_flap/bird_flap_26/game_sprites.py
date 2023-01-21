@@ -6,7 +6,7 @@ import math
 class Bird(Sprite):
     SPRITE_WIDTH = 8
     SPRITE_HEIGHT = 8
-    SPRITE_SPEED = 5
+    SPRITE_SPEED = 1
     SPRITE_FPS = 3            # animation frame rate
     def __init__(self, x, y, fastest_sprite_speed, game_fps):
         Sprite.__init__(self, x, y, fastest_sprite_speed, game_fps)
@@ -18,7 +18,7 @@ class Bird(Sprite):
 class Ball(Sprite):
     SPRITE_WIDTH = 6
     SPRITE_HEIGHT = 6
-    SPRITE_SPEED = 7
+    SPRITE_SPEED = 5
     SPRITE_FPS = 2            # animation frame rate
     def __init__(self, x, y, fastest_sprite_speed, game_fps):
         Sprite.__init__(self, x, y, fastest_sprite_speed, game_fps)
