@@ -1,4 +1,4 @@
-# Version 25
+# Version 26
 
 
 Fix jitter solution
@@ -12,15 +12,14 @@ Should go back to rounding solution
 but how to solve the cycle of bad jitter detections?
 
 (solved) the sprite to max sprite speed ratio is now a Fraction object. This allows precis ratios that will add up to whole numbers when expected
+     reduces but does not eliminate jitter
 
 
 (maybe remove jitter logic until future and focu on other game mechanics)
+(done) removed complex jitter logic
 
-Add walker at bottom of screen
-  - Start game with "x" birds and 1 ball
-  - if walker hit by bird, walker "catches" bird
-    - bird disappears
-    - new bird created
-    - one more ball added
-  - if walker hit by ball, ball rebounds and walker slows down -- making it harder to catch birds
-Add score counter with timer and number of hits
+(done) added snap method that rounds down sprite to a whole pixel value for x and y 
+       call snap method when collision or wall detected
+
+
+

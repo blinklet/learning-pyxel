@@ -8,7 +8,7 @@ import math
 
 SCREEN_SIZE_X = 50
 SCREEN_SIZE_Y = 50
-FPS = 10
+FPS = 30
 # FPS must be higher than each sprite's SPRITE_FPS value. 
 # The fastest sprite will appear to travel at the FPS speed.
 # Every other sprite travels slower, 
@@ -17,7 +17,7 @@ BACKGROUND_COLOR = 2
 ASSET_FILE = "../../assets/platformer.pyxres"
 MAX_SPRITES_FACTOR = 0.45
 
-# Get highest speed factor from classes defined in game_sprites module
+# Get highest speed from classes defined in game_sprites module
 def get_speed():
     speed_list = []
     for name, obj in inspect.getmembers(game_sprites):
@@ -58,7 +58,8 @@ class App:
             (pyxel.height // LARGEST_SPRITE_HEIGHT)) * MAX_SPRITES_FACTOR
         self.walker_x = random.randint(1, pyxel.width - game_sprites.Walker1.SPRITE_WIDTH - 1)
         self.walker_y = pyxel.height - game_sprites.Walker1.SPRITE_HEIGHT
-        self.walker = game_sprites.Walker1(self.walker_x, self.walker_y, MAX_SPRITE_SPEED, base_fps)
+        self.hit = False
+        self.walker = game_sprites.Walker1(self.walker_x, self.walker_y, MAX_SPRITE_SPEED, base_fps, self.hit)
 
         pyxel.run(self.update, self.draw)
 
@@ -77,10 +78,10 @@ class App:
             new_sprite_x = random.randint(1, pyxel.width - game_sprites.Sprite.SPRITE_WIDTH - 1)
             new_sprite_y = random.randint(1, pyxel.height - game_sprites.Sprite.SPRITE_HEIGHT - 1)
             return(game_sprites.Sprite(new_sprite_x, new_sprite_y, MAX_SPRITE_SPEED, base_fps))
-        if sprite_type == "walker":
-            new_sprite_x = random.randint(1, pyxel.width - game_sprites.Walker1.SPRITE_WIDTH - 1)
-            new_sprite_y = pyxel.height - game_sprites.Walker1.SPRITE_HEIGHT
-            return(game_sprites.Walker1(new_sprite_x, new_sprite_y, MAX_SPRITE_SPEED, base_fps))
+        # if sprite_type == "walker":
+        #     new_sprite_x = random.randint(1, pyxel.width - game_sprites.Walker1.SPRITE_WIDTH - 1)
+        #     new_sprite_y = pyxel.height - game_sprites.Walker1.SPRITE_HEIGHT
+        #     return(game_sprites.Walker1(new_sprite_x, new_sprite_y, MAX_SPRITE_SPEED, base_fps))
 
     def add_new_sprite(self, sprite_type):
         # Create new sprite in random position
@@ -133,11 +134,9 @@ class App:
                 self.add_new_sprite("sprite") 
 
         if pyxel.btnp(pyxel.KEY_A, 1, 1):
-            self.walker.animate()
             self.walker.move("left")
 
         if pyxel.btnp(pyxel.KEY_F, 1, 1):
-            self.walker.animate()
             self.walker.move("right")                 
 
         if pyxel.btnp(pyxel.KEY_BACKSPACE):
@@ -151,20 +150,27 @@ class App:
         #
         # maybe try different approach: https://gamedev.net/forums/topic/701045-axis-aligned-rectangle-collision-handling/5400917/
 
-        # Check screen collision first (new velocity in bounce_off_edge function)
-        # Check all birds for contact with edge and  
-        for sprite in self.sprite_list:
+        # Check screen or walker collision first (new velocity in bounce_off_edge function)
+        # Check all birds for contact with edge and walker  
+        for num, sprite in enumerate(self.sprite_list):
             if sprite.reached_screen_edge(pyxel.width,pyxel.height):
                 sprite.previous_collision_detected = True  # do not change direction after this collision, during this round
-                sprite.snap()
+                # sprite.snap()
                 sprite.bounce_off_edge(pyxel.width,pyxel.height)
+            if sprite.intersects(self.walker):   # sprite hits walker
+                self.walker.hit = True
+                self.sprite_list.pop(num) 
+                self.add_new_sprite(sprite.TYPE) # replace sprite somewhere else on the screen
+
+     
+
 
         for sprite, other_sprite in itertools.combinations(self.sprite_list, 2):
             if other_sprite.previous_collision_detected == False: 
                 if sprite.intersects(other_sprite): 
                     other_sprite.previous_collision_detected = True  # set collision flag on other birds where detected with current sprite
-                    sprite.snap()
-                    other_sprite.snap()
+                    # sprite.snap()
+                    # other_sprite.snap()
                     sprite.velocity_x, other_sprite.velocity_x = other_sprite.velocity_x, sprite.velocity_x
                     sprite.velocity_y, other_sprite.velocity_y = other_sprite.velocity_y, sprite.velocity_y
 
@@ -172,6 +178,8 @@ class App:
             sprite.previous_collision_detected = False  # reset collisions on all birds
             sprite.animate()
             sprite.move()
+
+        self.walker.animate()
 
     def draw(self):
         pyxel.cls(BACKGROUND_COLOR)

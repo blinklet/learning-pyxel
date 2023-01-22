@@ -5,6 +5,7 @@ import math
 
 class Sprite:
     # Class attributes used in game program to find properties of the class
+    TYPE = "sprite"
     SPRITE_WIDTH = 6
     SPRITE_HEIGHT = 6
     SPRITE_SPEED = 0
@@ -12,7 +13,7 @@ class Sprite:
 
     def __init__(self, x, y, fastest_sprite_speed, game_fps):
         self.x = x            # real sprite position on pixelated screen
-        self.y = y            # real sprite position on pixelated screen
+        self.y = y - 16       # real sprite position on pixelated screen. Leave space for walker
         self.old_x = x
         self.old_y = y
         self.img = 0          # image bank number from resource file
@@ -100,23 +101,23 @@ class Sprite:
         else:
             return("stationary")
 
-    def snap(self):
-        # snap sprite to nearest pixel integer value
-        self.x = Fraction(int(self.x), 1)
-        self.y = Fraction(int(self.y), 1)
+    # def snap(self):
+    #     # snap sprite to nearest pixel integer value
+    #     self.x = Fraction(int(self.x), 1)
+    #     self.y = Fraction(int(self.y), 1)
 
-        if self.x > pyxel.width - self.w:
-            self.x = pyxel.width - self.w
-            print("Past right edge")
-        if self.x < 0:
-            self.x = 0
-            print("Past left edge")
-        if self.y > pyxel.height - self.h:
-            self.y = pyxel.height - self.h
-            print("Past bottom edge")
-        if self.y < 0:
-            self.y = 0
-            print("Past top edge")
+    #     if self.x > pyxel.width - self.w:
+    #         self.x = pyxel.width - self.w
+    #         print("Past right edge")
+    #     if self.x < 0:
+    #         self.x = 0
+    #         print("Past left edge")
+    #     if self.y > pyxel.height - self.h:
+    #         self.y = pyxel.height - self.h
+    #         print("Past bottom edge")
+    #     if self.y < 0:
+    #         self.y = 0
+    #         print("Past top edge")
 
 
 
@@ -133,14 +134,20 @@ class Sprite:
             return -1
 
     def animate(self):
-        # Choose next sprite in animation sequence. There are three frames
-        # the frame sequence to be: 0, 1, 2, 0, 1, 2,...        
-        if self.animate_clock % math.ceil((self.game_fps * self.fastest_sprite_speed)//self.SPRITE_FPS) == 0:
+        # Animation speed is relative to game_fps and
+        # animation will cycle x times per y frames where:
+        #      x = length of animation
+        #      y = FPS value     
+        #if self.animate_clock % math.ceil((self.game_fps * self.fastest_sprite_speed)//self.SPRITE_FPS) == 0:
+        step = int((self.game_fps * self.fastest_sprite_speed)//self.SPRITE_FPS)
+        if step == 0:
+            step = 1
+        if self.animate_clock % step == 0:
             self.animate_clock = 0 
             self.frame = self.frame + 1
         if self.frame > self.animation_size:
             self.frame = 0
-        #print(self.frame)
+        # print(self.frame)
         self.u = self.sequence[self.frame][0]
         self.v = self.sequence[self.frame][1]
         self.animate_clock = self.animate_clock + 1
@@ -152,7 +159,6 @@ class Sprite:
         self.x += self.velocity_x
         self.y -= self.velocity_y
     
-
     def draw(self):
         self.width = self.w * self.facing 
         pyxel.blt(self.x, self.y, self.img, self.u, self.v, self.width, self.h, self.col)
