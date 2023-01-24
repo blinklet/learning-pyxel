@@ -8,7 +8,7 @@ import math
 
 SCREEN_SIZE_X = 150
 SCREEN_SIZE_Y = 150
-FPS = 30
+FPS = 100
 # FPS must be higher than each sprite's SPRITE_FPS value. 
 # The fastest sprite will appear to travel at the FPS speed.
 # Every other sprite travels slower, 
@@ -133,10 +133,10 @@ class App:
             if not self.at_max_sprites():
                 self.add_new_sprite("sprite") 
 
-        if pyxel.btnp(pyxel.KEY_A, 1, 1):
+        if pyxel.btnp(pyxel.KEY_A, 1, 1) or pyxel.btnp(pyxel.KEY_LEFT, 1, 1):
             self.walker.move("left")
 
-        if pyxel.btnp(pyxel.KEY_F, 1, 1):
+        if pyxel.btnp(pyxel.KEY_F, 1, 1) or pyxel.btnp(pyxel.KEY_RIGHT, 1, 1):
             self.walker.move("right")                 
 
         if pyxel.btnp(pyxel.KEY_BACKSPACE):

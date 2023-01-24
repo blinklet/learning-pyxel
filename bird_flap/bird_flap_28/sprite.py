@@ -35,7 +35,7 @@ class Sprite:
 
         # each sprite starts with a randomly-selected velocity (direction)
         self.velocity_x = random.randint(-1, 1) * self.speed_ratio
-        self.velocity_y = random.randint(-1, 1) * self.speed_ratio
+        self.velocity_y = random.choice((-1, 1)) * self.speed_ratio  # always move either up or down
         
         # avoid motionless sprites
         if self.SPRITE_SPEED == 0:
