@@ -1,0 +1,384 @@
+# Try the following
+
+extends KinematicBody2D
+
+export (int) var speed = 10
+
+var velocity = Vector2() var x = position.x var y = position.y var oldx = position.x var oldy = position.y
+
+func get_input(): velocity = Vector2() if Input.is_action_pressed('right'): velocity.x += 1 if Input.is_action_pressed('left'): velocity.x -= 1 if Input.is_action_pressed('down'): velocity.y += 1 if Input.is_action_pressed('up'): velocity.y -= 1 velocity = velocity.normalized()
+
+func _physics_process(delta): oldx = position.x oldy = position.y get_input() move_and_slide(velocity * speed)
+
+if velocity:
+    if abs(oldx - position.x) > abs(oldy - position.y): 
+        x = round(position.x)
+        y = round(position.y + (x - position.x) * velocity.y / velocity.x)
+        position.y = y
+    elif abs(oldx - position.x) <= abs(oldy - position.y):
+        y = round(position.y)
+        x = round(position.x + (y - position.y) * velocity.x / velocity.y)
+        position.x = x
+
+
+# Also try:
+Search "agorithm smooth sub-pixel movement diagonal"
+https://laroldsjubilantjunkyard.com/tutorials/how-to-make-a-gameboy-game/smooth-movement-using-sub-pixel-resolution/
+https://laroldsjubilantjunkyard.com/ is a great resource for Pixel game programming
+
+
+If one number going up while the other goes down
+Then you need to  
+Direction: up - right
+           (13.5,51.5)(14.0,51.0)(14.5,50.5)(15.0,50.0)  round up X, round down Y
+instead of (13,  51  )(14,  51  )(14,  50  )(15,  50  )
+need       (13,  51  )(13,  51  )(14,  50  )(14,  50  )
+
+           (13.0,51.5)(13.5,51.0)(14.0,50.5)(14.5,50.0)  round everything down
+instead of (13,  51  )(13,  51  )(14,  50  )(15,  50  )
+need       (13,  51  )(13,  51  )(14,  50  )(14,  50  )
+
+
+Direction: up - left
+           (13.5,51.5)(13.0,51.0)(12.5,50.5)(12.0,50.0)  round everything down
+instead of (13,  51  )(13,  51  )(12,  50  )(12,  50  )
+need       (13,  51  )(13,  51  )(12,  50  )(12,  50  )
+
+           (13.0,51.5)(12.5,51.0)(12.0,50.5)(11.5,50.0)  round up X, round down y
+instead of (13,  51  )(12,  51  )(12,  50  )(11,  50  )
+need       (13,  51  )(13,  51  )(12,  50  )(12,  50  )
+
+
+If both numbers going up together or down together
+Direction: down - right
+           (13.5,51.5)(14.0,52.0)(14.5,52.5)(15.0,53.0)  round everything down
+instead of (13,  51  )(14,  52  )(14,  52  )(15,  53  )
+need       (13,  51  )(14,  52  )(14,  52  )(15,  53  )
+
+           (13.0,51.5)(13.5,52.0)(14.0,52.5)(14.5,53.0)  round down X, round up Y
+instead of (13,  51  )(13,  52  )(14,  52  )(14,  53  )
+need       (13,  52  )(13,  52  )(14,  53  )(14,  53  ) 
+
+
+Direction: down - left
+           (13.5,51.5)(13.0,52.0)(12.5,52.5)(12.0,53.0) round down X, round up Y
+instead of (13,  51  )(13,  52  )(12,  52  )(12,  53  )
+need       (13,  52  )(13,  52  )(12,  53  )(12,  53  )
+
+           (13.0,51.5)(12.5,52.0)(12.0,52.5)(11.5,53.0)  round everything down
+instead of (13,  51  )(12,  52  )(12,  52  )(11,  53  )
+need       (13,  51  )(12,  52  )(12,  52  )(11,  53  )
+
+
+ 
+
+
+def find_direction(new_x, old_x, new_y, old_y):
+    if new_x - old_x > 0 and  new_y - old_y < 0:
+        return("up-right")
+    elif new_x - old_x < 0 and  new_y - old_y < 0:
+        return("up-left")
+    elif new_x - old_x > 0 and  new_y - old_y > 0:
+        return("down-right")
+    elif new_x - old_x < 0 and  new_y - old_y > 0:
+        return("down-left")
+    elif new_x - old_x == 0 and  new_y - old_y < 0:
+        return("up")
+    elif new_x - old_x == 0 and  new_y - old_y > 0:
+        return("down")
+    elif new_x - old_x > 0 and  new_y - old_y == 0:
+        return("right")
+    elif new_x - old_x < 0 and  new_y - old_y == 0:
+        return("left")
+    else:
+        return("stationary") 
+
+OR...  (I chose the one below)
+
+def find_direction(self.velocity_x, self.velocity_y):
+    if self.velocity_x > 0 and self.velocity_y > 0:
+        return("up-right")
+    elif self.velocity_x < 0 and self.velocity_y > 0:
+        return("up-left")
+    elif self.velocity_x > 0 and self.velocity_y < 0:
+        return("down-right")
+    elif self.velocity_x < 0 and self.velocity_y < 0:
+        return("down-left")
+    elif self.velocity_x == 0 and self.velocity_y > 0:
+        return("up")
+    elif self.velocity_x == 0 and self.velocity_y < 0:
+        return("down")
+    elif self.velocity_x > 0 and self.velocity_y == 0:
+        return("right")
+    elif self.velocity_x < 0 and self.velocity_y == 0:
+        return("left")
+    else:
+        return("stationary") 
+
+def smooth(self):
+    direction = find_direction()
+    if direction in ["up-right","up-left","down-right","down-left"]:
+        test_x = abs(int(old_x) - int(new_x))
+        test_y = abs(int(old_y) - int(new_y))
+        if test_x != test_y:   # if delta exists
+            if direction in ["up-right","up-left"]:
+                return(math.ceil(self.x), int(self.y)) # round up X, round down Y
+            elif direction in ["down-right","down-left"]:
+                return(int(self.x), math.ceil(self.y)) # round down X, round up Y
+            else:
+                return(int(self.x), int(self.y)) # round everything down
+
+
+BUT!!! the above seems to fail when I have sprite speeds that d
+
+
+When bird velocity = 1/3, going down-right and rounding all down (no jitter)
+Maybe problem is with the math. seems like the natuaral inaccuracy of floats is the issue here.
+Maybe switch to fractions?
+
+down-right real: 6.333333333333333 20.333333333333332 disp 6 20   
+down-right real: 6.666666666666666 20.666666666666664 disp 6 20
+down-right real: 6.999999999999999 20.999999999999996 disp 6 20   should be real: 7.0 and 21.0
+down-right real: 7.333333333333332 21.33333333333333 disp 7 21    JITTER
+down-right real: 7.666666666666665 21.66666666666666 disp 7 21
+down-right real: 7.999999999999998 21.999999999999993 disp 7 21    should be real: 8.0 and 22.0
+down-right real: 8.333333333333332 22.333333333333325 disp 8 22
+down-right real: 8.666666666666666 22.666666666666657 disp 8 22
+down-right real: 9.0 22.99999999999999                disp 9 23     JITTER        fractions are not exact so jitter is detected and wrong rounding done
+down-right real: 9.333333333333334 23.33333333333332 disp 9 24      JITTER fractions are not exact so jitter is detected
+down-right real: 9.666666666666668 23.666666666666654 disp 9 23
+down-right real: 10.000000000000002 23.999999999999986 disp 10 24    JITTER fractions are not exact so jitter is detected
+down-right real: 10.333333333333336 24.333333333333318 disp 10 25    JITTER
+down-right real: 10.66666666666667 24.66666666666665 disp 10 24
+down-right real: 11.000000000000004 24.999999999999982 disp 11 25    JITTER
+down-right real: 11.333333333333337 25.333333333333314 disp 11 26    JITTER
+down-right real: 11.666666666666671 25.666666666666647 disp 11 25
+down-right real: 12.000000000000005 25.99999999999998 disp 12 26    JITTER   should be natural 26  this causes jitter to be detected
+down-right real: 12.33333333333334 26.33333333333331 disp 12 27    JITTER
+down-right real: 12.666666666666673 26.666666666666643 disp 12 26
+down-right real: 13.000000000000007 26.999999999999975 disp 13 27    JITTER   should be natural 27
+down-right real: 13.333333333333341 27.333333333333307 disp 13 28    JITTER
+down-right real: 13.666666666666675 27.66666666666664 disp 13 27
+down-right real: 14.000000000000009 27.99999999999997 disp 14 28    JITTER   should be natural 28
+down-right real: 14.333333333333343 28.333333333333304 disp 14 29    JITTER
+down-right real: 14.666666666666677 28.666666666666636 disp 14 28
+down-right real: 15.00000000000001 28.999999999999968 disp 15 29    JITTER should be natural 29
+down-right real: 15.333333333333345 29.3333333333333 disp 15 30    JITTER
+down-right real: 15.666666666666679 29.666666666666632 disp 15 29
+down-right real: 16.00000000000001 29.999999999999964 disp 16 30
+down-right real: 16.333333333333343 30.333333333333297 disp 16 31
+down-right real: 16.666666666666675 30.66666666666663 disp 16 30
+down-right real: 17.000000000000007 30.99999999999996 disp 17 31
+down-right real: 17.33333333333334 31.333333333333293 disp 17 32
+down-right real: 17.66666666666667 31.666666666666625 disp 17 31
+down-right real: 18.000000000000004 31.999999999999957 disp 18 32
+down-right real: 18.333333333333336 32.33333333333329 disp 18 33
+
+up-right real: 18.666666666666668 31.99999999999996 disp 19 31
+up-right real: 19.0 31.66666666666663 disp 19 31
+up-right real: 19.333333333333332 31.333333333333297 disp 19 31
+up-right real: 19.666666666666664 30.999999999999964 disp 20 30
+up-right real: 19.999999999999996 30.666666666666632 disp 19 30
+up-right real: 20.33333333333333 30.3333333333333 disp 21 30
+up-right real: 20.66666666666666 29.999999999999968 disp 21 29
+up-right real: 20.999999999999993 29.666666666666636 disp 20 29
+up-right real: 21.333333333333325 29.333333333333304 disp 22 29
+up-right real: 21.666666666666657 28.99999999999997 disp 22 28
+up-right real: 21.99999999999999 28.66666666666664 disp 21 28
+up-right real: 22.33333333333332 28.333333333333307 disp 23 28
+up-right real: 22.666666666666654 27.999999999999975 disp 23 27
+up-right real: 22.999999999999986 27.666666666666643 disp 22 27
+up-right real: 23.333333333333318 27.33333333333331 disp 24 27
+up-right real: 23.66666666666665 26.99999999999998 disp 24 26
+up-right real: 23.999999999999982 26.666666666666647 disp 23 26
+up-right real: 24.333333333333314 26.333333333333314 disp 25 26
+up-right real: 24.666666666666647 25.999999999999982 disp 25 25
+up-right real: 24.99999999999998 25.66666666666665 disp 24 25
+up-right real: 25.33333333333331 25.333333333333318 disp 26 25
+up-right real: 25.666666666666643 24.999999999999986 disp 26 24
+up-right real: 25.999999999999975 24.666666666666654 disp 25 24
+up-right real: 26.333333333333307 24.33333333333332 disp 27 24
+up-right real: 26.66666666666664 23.99999999999999 disp 27 23
+up-right real: 26.99999999999997 23.666666666666657 disp 26 23
+up-right real: 27.333333333333304 23.333333333333325 disp 28 23
+up-right real: 27.666666666666636 22.999999999999993 disp 28 22
+up-right real: 27.999999999999968 22.66666666666666 disp 27 22
+up-right real: 28.3333333333333 22.33333333333333 disp 29 22
+up-right real: 28.666666666666632 21.999999999999996 disp 29 21
+up-right real: 28.999999999999964 21.666666666666664 disp 28 21
+up-right real: 29.333333333333297 21.333333333333332 disp 30 21
+up-right real: 29.66666666666663 21.0 disp 29 21
+
+
+up-left real: 15.666666666666677 1.666666666666673 disp 15 1
+up-left real: 15.333333333333343 1.3333333333333397 disp 15 1
+up-left real: 15.000000000000009 1.0000000000000064 disp 15 1
+up-left real: 14.666666666666675 0.6666666666666732 disp 14 0
+up-left real: 14.333333333333341 0.33333333333333987 disp 14 0
+up-left real: 14.000000000000007 6.5503158452884236e-15 disp 14 0
+up-left real: 13.666666666666673 -0.33333333333332676 disp 14 0
+down-left real: 13.33333333333334 6.5503158452884236e-15 disp 13 0
+down-left real: 13.000000000000005 0.33333333333333987 disp 13 0
+down-left real: 12.666666666666671 0.6666666666666732 disp 12 1
+down-left real: 12.333333333333337 1.0000000000000064 disp 12 2
+down-left real: 12.000000000000004 1.3333333333333397 disp 12 1
+down-left real: 11.66666666666667 1.666666666666673 disp 11 2
+down-left real: 11.333333333333336 2.000000000000006 disp 11 3
+down-left real: 11.000000000000002 2.3333333333333397 disp 11 2
+down-left real: 10.666666666666668 2.666666666666673 disp 10 3
+down-left real: 10.333333333333334 3.0000000000000067 disp 10 4
+down-left real: 10.0 3.33333333333334 disp 10 3
+down-left real: 9.666666666666666 3.6666666666666736 disp 9 4
+down-left real: 9.333333333333332 4.000000000000007 disp 9 5
+down-left real: 8.999999999999998 4.33333333333334 disp 8 5
+down-left real: 8.666666666666664 4.666666666666673 disp 8 4
+down-left real: 8.33333333333333 5.000000000000006 disp 8 6
+down-left real: 7.999999999999997 5.333333333333339 disp 7 6
+down-left real: 7.666666666666664 5.666666666666672 disp 7 5
+down-left real: 7.333333333333331 6.000000000000005 disp 7 7
+down-left real: 6.999999999999998 6.333333333333338 disp 6 7
+down-left real: 6.666666666666665 6.666666666666671 disp 6 6
+down-left real: 6.333333333333332 7.000000000000004 disp 6 8
+
+
+Looking at bird = 1, ball = 4
+
+if jitter, round down X, round up Y
+down-right real: 13.25 25.25 disp 13 25
+down-right real: 13.5 25.5 disp 13 25
+down-right real: 13.75 25.75 disp 13 25
+down-right real: 14.0 26.0 disp 14 26
+down-right real: 14.25 26.25 disp 14 26
+down-right real: 14.5 26.5 disp 14 26
+down-right real: 14.75 26.75 disp 14 26
+down-right real: 15.0 27.0 disp 15 27
+down-right real: 15.25 27.25 disp 15 27
+down-right real: 15.5 27.5 disp 15 27
+down-right real: 15.75 27.75 disp 15 27
+
+if jitter, round up X, round down Y
+up-right real: 20.25 31.75 disp 21 31   jitter?????
+up-right real: 20.5 31.5   disp 20 31
+up-right real: 20.75 31.25 disp 20 31
+up-right real: 21.0 31.0   disp 21 31   jitter?????
+up-right real: 21.25 30.75 disp 22 30   jitter?????
+up-right real: 21.5 30.5   disp 21 30
+up-right real: 21.75 30.25 disp 21 30
+up-right real: 22.0 30.0   disp 22 30   jitter?????
+up-right real: 22.25 29.75 disp 23 29   jitter?????
+up-right real: 22.5 29.5   disp 22 29
+up-right real: 22.75 29.25 disp 22 29
+up-right real: 23.0 29.0   disp 23 29   jitter?????
+up-right real: 23.25 28.75 disp 24 28   jitter?????
+up-right real: 23.5 28.5   disp 23 28
+up-right real: 23.75 28.25 disp 23 28
+up-right real: 24.0 28.0   disp 24 28
+up-right real: 24.25 27.75 disp 25 27
+up-right real: 24.5 27.5   disp 24 27
+up-right real: 24.75 27.25 disp 24 27
+up-right real: 25.0 27.0   disp 25 27
+up-right real: 25.25 26.75 disp 26 26
+up-right real: 25.5 26.5   disp 25 26
+up-right real: 25.75 26.25 disp 25 26
+up-right real: 26.0 26.0   disp 26 26
+up-right real: 26.25 25.75 disp 27 25
+up-right real: 26.5 25.5   disp 26 25
+up-right real: 26.75 25.25 disp 26 25
+up-right real: 27.0 25.0   disp 27 25
+up-right real: 27.25 24.75 disp 28 24
+
+Usr Fractions: (but they won't solve the jitter offset issue when ratios different than 1:2)
+
+(solved)
+in sprite.py:
+self.speed_ratio = Fraction(self.SPRITE_SPEED, fastest_sprite_speed)
+and
+self.velocity_x = random.randint(-1, 1) * self.speed_ratio
+self.velocity_y = random.randint(-1, 1) * self.speed_ratio
+
+Great.
+Still get jitter at some speed ratios (like 1:4)
+
+down-left real: 57/2 99/2    disp 28 49
+down-left real: 113/4 199/4  disp 28 49
+down-left real: 28 50        disp 28 50
+down-left real: 111/4 201/4  disp 27 51   **
+down-left real: 55/2 101/2   disp 27 50
+down-left real: 109/4 203/4  disp 27 50
+down-left real: 27 51        disp 27 51
+down-left real: 107/4 205/4  disp 26 52   ** detected Jitter and rounded up
+down-left real: 53/2 103/2   disp 26 51
+down-left real: 105/4 207/4  disp 26 51
+down-left real: 26 52        disp 26 52
+down-left real: 103/4 209/4  disp 25 53   ** detected Jitter and rounded up
+down-left real: 51/2 105/2   disp 25 52
+down-left real: 101/4 211/4  disp 25 52
+down-left real: 25 53        disp 25 53  
+down-left real: 99/4 213/4   disp 24 54   ** detected Jitter and rounded up
+down-left real: 49/2 107/2   disp 24 53
+down-left real: 97/4 215/4   disp 24 53
+down-left real: 24 54        disp 24 54
+down-left real: 95/4 217/4   disp 23 55   ** detected Jitter and rounded up
+down-left real: 47/2 109/2   disp 23 54
+down-left real: 93/4 219/4   disp 23 54
+        
+
+
+
+
+            def smooth(self):
+        # returns displayable x and y values that do not cause jitter
+        direction = self.find_direction()
+        if direction in ["up-right","up-left","down-right","down-left"]:
+            test_x = abs(abs(int(self.old_x)) - abs(int(self.x)))
+            test_y = abs(abs(int(self.old_y)) - abs(int(self.y)))
+            x_fract = self.x - int(self.x)
+            y_fract = self.y - int(self.y)
+            if x_fract = y_fract:
+                return self.x, self.y
+            else:
+                
+
+            if test_x != test_y:   # if jitter exists
+                if direction == "up-right":
+                    #self.y = self.y + self.speed_ratio # change x speed to sync up jitter
+                    
+
+                    print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
+                    return math.ceil(self.x), int(self.y)  # round up X, round down Y
+                    #return self.x, self.y
+                elif direction == "up-left":
+                    #self.x = self.x - self.speed_ratio # change x speed to sync up jitter
+                    print(direction, "real:", self.x, self.y, "disp", math.ceil(self.x), int(self.y))
+                    return math.ceil(self.x), int(self.y)  # round up X, round down Y
+                    #return self.x, self.y
+                elif direction == "down-right":
+                    #self.x = self.x + self.speed_ratio # change x speed to sync up jitter
+                    print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
+                    return int(self.x), math.ceil(self.y)  # round down X, round up Y
+                    #return self.x, self.y
+                elif direction =="down-left":
+                    #self.x = self.x - self.speed_ratio # change x speed to sync up jitter
+                    print(direction, "real:", self.x, self.y, "disp", int(self.x), math.ceil(self.y))
+                    return int(self.x), math.ceil(self.y)  # round down X, round up Y
+                    #return self.x, self.y
+            else:
+                print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
+                return int(self.x), int(self.y)  # round everything down
+                #return self.x, self.y
+        else:
+            print(direction, "real:", self.x, self.y, "disp", int(self.x), int(self.y))
+            return int(self.x), int(self.y)  # round everything down
+            #return self.x, self.y
+
+
+
+New solution:
+    when sprites created, they start at an integer for x and Y
+    when collision or wall detected, reset x and y to nearest integer
+        round down
+        check for edge cases where new x or y is past edge of screen
+(solved??) this last solution appears to work OK but sprites display a little one-pixel jerk 
+        up and to the left when detecting a collision or wall
+        this may be the case of one round of jitter before I snap the sprite??
+
