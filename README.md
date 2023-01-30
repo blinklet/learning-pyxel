@@ -28,23 +28,23 @@ Some more advanced tutorials about general game development are:
 
 The following projects are available on Github so you can look through their source code and see how they were built.
 
+* [Pyxel examples](https://github.com/kitao/pyxel#try-pyxel-examples): The official game examples created and maintained by the Pyxel community
 * [Pyxel lander](https://pypi.org/project/pyxel-lander/): a Moon Lander clone
 * [Asteroids](https://github.com/timbledum/asteroids): The classic Asteroids game made with Pyxel
 * [PyxelSudoku](https://github.com/nickdelgrosso/PyxelSudoku2): Sudoku game made with Pyxel
-* [Tetris and Copter](https://github.com/shivanju/pyxel-games): Simple versions of the classic Tetris game and the classic Copter game.
+* [Tetris and Copter](https://github.com/shivanju/pyxel-games): Simple versions of the classic Tetris game and the classic Copter game
 * [Pyxel raycast](https://github.com/danmacnaughtan/pyxel-raycast): An example of raycast rendering 
-* [Python nibbles](https://github.com/CaffeinatedTech/Python_Nibbles): a simple snake game. It is the source code for the snake game developed during CaffeinatedTech's video, referred to above.
-* [Pyxelext](https://github.com/bloodywing/pyxelext): Pyxel extensions. One of these extensions shows an example of using the [Pymunk](http://www.pymunk.org/en/latest/index.html) 2D physics library with Pyxel.
-* [2021 A Space Odyssey](https://github.com/HB-fga/2021-A-Space-Odyssey): An example of integrating the [easymunk-physics](https://github.com/fabiommendes/easymunk) library to build a Pyxel game.
+* [Python nibbles](https://github.com/CaffeinatedTech/Python_Nibbles): a simple snake game. It is the source code for the snake game developed during CaffeinatedTech's video, referred to above
+* [Pyxelext](https://github.com/bloodywing/pyxelext): Pyxel extensions. One of these extensions shows an example of using the [Pymunk](http://www.pymunk.org/en/latest/index.html) 2D physics library with Pyxel
+* [2021 A Space Odyssey](https://github.com/HB-fga/2021-A-Space-Odyssey): An example of integrating the [easymunk-physics](https://github.com/fabiommendes/easymunk) library to build a Pyxel game
 
-<!-- commented out because Pyxel-physics is not finished and last commit was 16 months ago. Pyxel-physics seems to have been replaced by easymunk-physics, by the same developer.
 ## Libraries that work with Pyxel
 
 The following libraries add more capability to Pyxel games:
 
-* [Pyxel physics](https://pypi.org/project/pyxel-physics/): a 2D physics library for Pyxel, based on [Pymunk](http://www.pymunk.org/en/latest/index.html).
+* [Easymunk physics](https://pypi.org/project/pyxel-physics/): a 2D physics library for Pyxel, based on [Pymunk](http://www.pymunk.org/en/latest/index.html).
 * [Pyxel server](https://github.com/FloppiDisk/pyxel_server): An API that integrates your Pyxel games with servers for multi-player games.
--->
+
 
 ## Text size
 
@@ -161,7 +161,7 @@ def draw():
 pyxel.run(update, draw)
 ```
 
-In the below example, I refactored this example in a class. Using classes and other object-oriented programming concepts is the better way to solve the problem of passing data between functions.
+In the below example, I refactored this example in a class. Using classes and other object-oriented programming concepts is the better way to solve the problem of passing global data between functions.
 
 ```python
 class App:
@@ -226,7 +226,7 @@ class App:
 App()
 ```
 
-Object-oriented programming makes it possible to write game Pyxel programs that contain more than a few sprites. However, beginner programmers may still create simple animations like the one shown above using only functions, which should give them opportunities to develop fun little programs before they have to learn about classes and Object-oriented programming.
+Object-oriented programming makes it possible to write game Pyxel programs that contain more than a few sprites. However, beginner programmers may still create simple animations like the one shown above using only functions, which should give them opportunities to develop fun little programs before they have to learn about classes and object-oriented programming.
 
 # Changes to make
 
@@ -247,7 +247,7 @@ https://happycoding.io/tutorials/processing/collision-detection
   - See chapter; "Collision Detection between Many Objects"
 
 
-2D collision detection using Numby:
+2D collision detection using Numpy:
 
 https://scipython.com/blog/two-dimensional-collisions/
 
