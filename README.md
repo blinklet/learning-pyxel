@@ -43,6 +43,8 @@ The following projects are available on Github so you can look through their sou
 The following libraries add more capability to Pyxel games:
 
 * [Easymunk physics](https://pypi.org/project/pyxel-physics/): a 2D physics library for Pyxel, based on [Pymunk](http://www.pymunk.org/en/latest/index.html).
+  * Actually, I think Pymunk is the more up-to-date version. The Easymunk docs point to the Pymunk source code at: https://github.com/viblo/pymunk
+  * The [easymunk Pyxel example](https://github.com/fabiommendes/easymunk/blob/main/examples/pyxel_demo.py) does not work
 * [Pyxel server](https://github.com/FloppiDisk/pyxel_server): An API that integrates your Pyxel games with servers for multi-player games.
 
 
