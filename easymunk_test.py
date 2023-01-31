@@ -1,5 +1,5 @@
 import easymunk.pyxel as phys
-from easymunk.pyxel import pyxel
+import pyxel
 
 # A very simple example. Maybe add more things later
 pyxel.init(120, 80)

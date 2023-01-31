@@ -13,3 +13,8 @@ Change logic for adding sprites. Randomly add sprites every X seconds
 - sprites get addede more frequently as game moves along
 - game is over when 3 lives lost (add lives to score)?
 
+
+(also test easymunk)
+See example:  https://github.com/HB-fga/2021-A-Space-Odyssey
+
+also how is easymunk different than pymunk??
