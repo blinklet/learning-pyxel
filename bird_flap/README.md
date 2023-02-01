@@ -40,6 +40,6 @@ Run the *bird_flap* program
 python3 ./bird_flap/bird_flap.py
 ```
 
-Press space bar to add more birds, and the *Backspace* key to remove birds. Press the *Q* key to quit.
+Move left and right using either *A* and *F* kets or arrow keys. Press the *Q* key to quit.
 
 

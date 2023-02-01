@@ -13,7 +13,10 @@ FPS = 30
 BACKGROUND_COLOR = 6
 BACKGROUND_FLASH = [8, 8, 10, 10, 8, 8]
 ASSET_FILE = "../../assets/platformer.pyxres"
-MAX_SPRITES_FACTOR = 0.45
+MAX_SPRITES_FACTOR = 0.15
+SPRITE_INTERVAL = 60
+
+
 
 # Get highest speed from classes defined in game_sprites module
 def fastest_sprite_speed():
@@ -48,14 +51,16 @@ class App:
         pyxel.init(SCREEN_SIZE_X, SCREEN_SIZE_Y, fps=clock_fps)
         pyxel.load(ASSET_FILE)
         self.sprite_list = []
-        self.max_sprites = ((pyxel.width // largest_sprite_width()) * \
-            (pyxel.height // largest_sprite_height())) * MAX_SPRITES_FACTOR
+        self.max_sprites = int(((pyxel.width / largest_sprite_width()) * \
+            (pyxel.height / largest_sprite_height())) * MAX_SPRITES_FACTOR)
         self.flash_red = False
         self.walker = game_sprites.Walker1(fastest_sprite_speed(), base_fps, self.flash_red)
         self.score = 0
-        self.score_text = "SCORE: " + str(self.score)
+        self.lives_left = 3
         self.flash_count = 0
         self.background_color = BACKGROUND_COLOR
+        self.GAME_OVER = False
+        self.START_SCREEN = True
         pyxel.run(self.update, self.draw)
 
     def generate_sprite(self, sprite_type):
@@ -100,28 +105,23 @@ class App:
         else:
             return False
 
-    def update(self):
+    def update_game(self):
+
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
-        if pyxel.btnp(pyxel.KEY_B):
+        if pyxel.frame_count % SPRITE_INTERVAL == 0:
             if not self.at_max_sprites():
                 self.add_new_sprite("bird")
 
-        if pyxel.btnp(pyxel.KEY_V):
+        if pyxel.frame_count % (3 * SPRITE_INTERVAL) == 0:
             if not self.at_max_sprites():
                 self.add_new_sprite("ball")
-
-        if pyxel.btnp(pyxel.KEY_T):
-            if not self.at_max_sprites():
-                self.add_new_sprite("sprite")              
-
-        if pyxel.btnp(pyxel.KEY_BACKSPACE):
-            self.remove_sprite()
 
         self.walker.animate()
         self.walker.update()
 
+        # collision detection algorithm copied from pyxel_examples/09_shooter.py
         for i in range(len(self.sprite_list) - 1, -1, -1):
             bi = self.sprite_list[i]
             bi.animate()
@@ -135,36 +135,106 @@ class App:
 
             if bi.intersects(self.walker):   # sprite hits walker
                 del self.sprite_list[i]
-                self.add_new_sprite(bi.TYPE) 
+                self.walker.hit = True
                 if bi.TYPE == "bird":
                     self.score = self.score + 1
                     self.flash_red = False
                 else:
-                    self.walker.hit = True
                     self.flash_red = True
                     self.flash_count = 0
                     self.score = self.score - 1
                     if self.score < 0:
                         self.score = 0
+                    self.lives_left = self.lives_left - 1
+                    if self.lives_left <= 0:
+                        self.lives_left = 0  
+                        self.GAME_OVER = True
 
         if self.flash_red:
             self.background_color = BACKGROUND_FLASH[self.flash_count]
-            print(self.flash_count, self.background_color)
             self.flash_count = self.flash_count + 1
             if self.flash_count == len(BACKGROUND_FLASH):
                 self.flash_red = False
                 self.flash_count = 0
-                print("Done", len(BACKGROUND_FLASH))
         else:
             self.background_color = BACKGROUND_COLOR
 
-            
-    def draw(self):
+    def update_start_screen(self):
+        if pyxel.btnp(pyxel.KEY_S):
+            self.START_SCREEN = False
+            self.sprite_list = []
+        if pyxel.btnp(pyxel.KEY_Q):
+            pyxel.quit()
+        self.walker.animate()
+        if not self.sprite_list:
+            self.add_new_sprite("bird")
+            self.add_new_sprite("bird")
+            self.sprite_list[0].y = pyxel.rndi(10, pyxel.height // 2 - 14)
+            self.sprite_list[1].y = pyxel.rndi(10, pyxel.height // 2 - 14)
+
+    def update_end_screen(self):
+        if pyxel.btnp(pyxel.KEY_S):
+            self.GAME_OVER = False
+            self.sprite_list = []
+            self.flash_red = False
+            self.score = 0
+            self.lives_left = 3
+            self.flash_count = 0
+            self.background_color = BACKGROUND_COLOR
+        if pyxel.btnp(pyxel.KEY_Q):
+            pyxel.quit()
+
+    def update(self):
+        if self.START_SCREEN:
+            self.update_start_screen()
+        elif self.GAME_OVER:
+            self.update_end_screen()
+        else:
+            self.update_game()
+
+    def draw_start_screen(self):
+        pyxel.cls(2)
+        pyxel.rect(0, pyxel.height - 6, pyxel.width, 6, 3) # Draw a rectangle of width w, height h and color col from (x, y).
+        self.walker.draw()
+        message = "Press S key"
+        pyxel.text(pyxel.width // 2 - len(message) // 2 * 4, pyxel.height // 2, message, 7)
+        message2 = "to start"
+        pyxel.text(pyxel.width // 2 - len(message2) // 2 * 4, pyxel.height // 2 + 6, message2, 7)
+
+        for sprite in self.sprite_list:
+            sprite.draw()
+
+    def draw_end_screen(self):
+        pyxel.cls(10)
+        pyxel.rect(0, pyxel.height - 6, pyxel.width, 6, 3) # Draw a rectangle of width w, height h and color col from (x, y).
+        self.walker.draw()
+        for sprite in self.sprite_list:
+            sprite.draw()
+        message = "GAME OVER"
+        pyxel.text(pyxel.width//2 - len(message) // 2 * 4, pyxel.height // 2 - 12, message, 7)
+        message2 = "Press S key"
+        pyxel.text(pyxel.width//2 - len(message2) // 2 * 4, pyxel.height // 2 + 6, message2, 7)
+        message3 = "to restart"
+        pyxel.text(pyxel.width//2 - len(message3) // 2 * 4, pyxel.height // 2 + 12, message3, 7)
+        pyxel.text(5, 5, "SCORE: " + str(self.score), 7)
+        pyxel.text(pyxel.width - 36, 5, "LIVES: 0", 7)
+
+    def draw_game(self):
         pyxel.cls(self.background_color)
+        pyxel.rect(0, pyxel.height - 6, pyxel.width, 6, 3) # Draw a rectangle of width w, height h and color col from (x, y).
         self.walker.draw()
         for sprite in self.sprite_list:
             sprite.draw()
         pyxel.text(5, 5, "SCORE: " + str(self.score), 7)
+        pyxel.text(pyxel.width - 36, 5, "LIVES: " + str(self.lives_left), 7)
+
+    def draw(self):
+        if self.START_SCREEN:
+            self.draw_start_screen()
+        elif self.GAME_OVER:
+            self.draw_end_screen()
+        else:
+            self.draw_game()
 
         
 App()

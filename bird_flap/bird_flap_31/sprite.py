@@ -32,7 +32,7 @@ class Sprite:
 
         # each sprite starts with a randomly-selected velocity (direction)
         self.velocity_x = pyxel.rndi(-1, 1) * self.speed_ratio
-        self.velocity_y = -1 * self.speed_ratio  # always move either down at start
+        self.velocity_y = -2 * self.speed_ratio  # always move either down at start
         
         # avoid motionless sprites
         if self.SPRITE_SPEED == 0:
@@ -42,7 +42,7 @@ class Sprite:
             while self.velocity_x == 0 and self.velocity_y == 0:
                 print('Motionless sprite. Resetting velocity')
                 self.velocity_x = pyxel.rndi(-1, 1) * self.speed_ratio
-                self.velocity_y = random.choice((-1, 1)) * self.speed_ratio
+                self.velocity_y = -2
                 
         # each sprite starts facing left or right, depending on velocity on x axis
         self.facing = self.face()
@@ -60,7 +60,7 @@ class Sprite:
     def reached_screen_edge(self,screen_x,screen_y):
         if self.x <= 0 or (self.x + self.w) >= screen_x:
             return True
-        elif self.y <= 0 or (self.y + self.h) >= screen_y:
+        elif self.y <= 0 or (self.y + self.h) >= screen_y - 3:
             return True
         else:
             return False
@@ -72,7 +72,7 @@ class Sprite:
             self.velocity_x = -abs(self.velocity_x)
         if self.y <= 0:  # top edge
             self.velocity_y = -abs(self.velocity_y)
-        if (self.y + self.h) >= screen_y:  # bottom edge
+        if (self.y + self.h) >= screen_y - 3:  # bottom edge
             self.velocity_y = abs(self.velocity_y) 
 
     def face(self):

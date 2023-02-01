@@ -44,7 +44,8 @@ The following libraries add more capability to Pyxel games:
 
 * [Easymunk physics](https://pypi.org/project/pyxel-physics/): a 2D physics library for Pyxel, based on [Pymunk](http://www.pymunk.org/en/latest/index.html).
   * Actually, I think Pymunk is the more up-to-date version. The Easymunk docs point to the Pymunk source code at: https://github.com/viblo/pymunk
-  * The [easymunk Pyxel example](https://github.com/fabiommendes/easymunk/blob/main/examples/pyxel_demo.py) does not work
+  * The [easymunk Pyxel example](https://github.com/fabiommendes/easymunk/blob/main/examples/pyxel_demo.py) does not work if normal, up-to-date pyxel package is in the same environment
+
 * [Pyxel server](https://github.com/FloppiDisk/pyxel_server): An API that integrates your Pyxel games with servers for multi-player games.
 
 
@@ -254,3 +255,10 @@ https://happycoding.io/tutorials/processing/collision-detection
 https://scipython.com/blog/two-dimensional-collisions/
 
 
+(also test easymunk)
+See example:  https://github.com/HB-fga/2021-A-Space-Odyssey
+
+also how is easymunk different than pymunk?? pymunk seems better maintained
+
+pyxel-physics?
+http://github.com/fabiommendes/pyxel-physics

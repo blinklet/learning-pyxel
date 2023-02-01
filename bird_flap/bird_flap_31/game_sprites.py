@@ -37,7 +37,7 @@ class Walker1(Sprite):
     TYPE = "walker"
     SPRITE_WIDTH = 8
     SPRITE_HEIGHT = 8
-    SPRITE_SPEED = 4         # do not use this constant. Use the walker_speed variable, instead
+    SPRITE_SPEED = 3         # do not use this constant. Use the walker_speed variable, instead
                              # SPRITE_SPEED still used to find max_sprite_speed and set speed_ratio
                              # so it still determines the "relative" speed of the walker
                              # compared to other sprites
@@ -46,7 +46,7 @@ class Walker1(Sprite):
         Sprite.__init__(self, fastest_sprite_speed, game_fps)
         self.r = self.SPRITE_WIDTH / 2
         self.x = pyxel.rndf(1, pyxel.width - self.SPRITE_WIDTH - 1)
-        self.y = pyxel.height - self.SPRITE_HEIGHT
+        self.y = pyxel.height - self.SPRITE_HEIGHT - 3
         self.sequence = ((0, 24), (8, 24))  # x-coordinates of sprite animation frames
         self.animation_size = len(self.sequence) - 1
         self.u = self.sequence[0][0]  # initial sprite horizontal position in image in resource file
