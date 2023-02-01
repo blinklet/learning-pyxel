@@ -231,6 +231,61 @@ App()
 
 Object-oriented programming makes it possible to write game Pyxel programs that contain more than a few sprites. However, beginner programmers may still create simple animations like the one shown above using only functions, which should give them opportunities to develop fun little programs before they have to learn about classes and object-oriented programming.
 
+# Distributing App
+
+## Pyxel App
+
+Move assets into the same directory and fix links in file.
+
+Then run command:
+
+```bash
+pyxel package bird_flap_web_33 bird_flap_web_33/game.py
+```
+
+This creates file named *bird_flap_web_33.pyxapp*.
+
+Now you can send the file to anyone who has Pyxel installed, and they can run it using the command:
+
+```bash
+pyxel play ./bird_flap_web_33.pyxapp
+```
+
+## Pyxel web app
+
+Publish you game on a web server so your friends can play it in their browser
+
+Convert the *pyxapp* file into an HTML file
+
+Pyxel [application file also can be converted](https://github.com/kitao/pyxel#how-to-distribute-applications) to an executable or an HTML file with the pyxel app2exe or pyxel app2html commands.
+
+```
+pyxel app2html ./bird_flap_web_33.pyxapp
+```
+
+Creates the file: *bird_flap_web_33.html*
+
+## Pyxel executable app
+
+First install *[Pyinstaller](https://pyinstaller.org/en/stable/#)*.
+
+```
+pip install -U pyinstaller
+```
+
+Works only for PCs. Convert the *pyxapp* file into an *exe* file that will run on most Windows PCs.
+
+```
+pyxel app2exe ./bird_flap_web_33.pyxapp
+```
+
+Creates the file: *bird_flap_web_33.exe*
+
+(test build on Mac and Linux to see if it will generate a working app for each of those platforms)
+
+## Python package
+
+
 # Changes to make
 
 Add examples of collision detection from newer versions of programs, starting at *bird_flap_5_moving_classes.py*.
@@ -262,3 +317,6 @@ also how is easymunk different than pymunk?? pymunk seems better maintained
 
 pyxel-physics?
 http://github.com/fabiommendes/pyxel-physics
+
+"Precision physics":
+https://github.com/CarlKCarlK/perfect-physics
