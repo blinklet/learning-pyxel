@@ -7,7 +7,8 @@ This repository contains the test programs I am writing while I learn how to cre
 The [Pyxel web page](https://github.com/kitao/pyxel#) contains everything you need to know about using Pyxel and the Pyxel resource editor, but some additional resources are listed below:
 
 * Pyxel's developer, [Takashi Kitao](https://twitter.com/kitao), [recommends](https://discord.com/channels/697925198992900106/697925198992900109/930086207239622666) working through the [Pyxel examples](https://github.com/kitao/pyxel#try-pyxel-examples) in the following order: 1, 5, 3, 4, 2, 9, and 10.
-* [Emanoel Barreiros](https://twitter.com/ebarreiros) wrote an excellent blog with nine posts about using Pyxel. The first post is in English and the remaining are in Portuguese but you can [translate](https://kinsta.com/blog/how-to-translate-a-website/) them in your web browser.
+* [Emanoel Barreiros](https://twitter.com/ebarreiros) wrote an excellent blog with nine [posts about using Pyxel](https://emanoelbarreiros.github.io/game/snake/snake-1/). The first post is in English and the remaining are in Portuguese but you can [translate](https://kinsta.com/blog/how-to-translate-a-website/) them in your web browser.
+
   * How to write a retro-style snake game using Pyxel
     * [Part 1](https://emanoelbarreiros.github.io/game/snake/snake-1/), [Part 2](https://emanoelbarreiros.github.io/game/snake/snake-2-pt/), [Part 3](https://emanoelbarreiros.github.io/game/snake/snake-3-pt/), [Part 4](https://emanoelbarreiros.github.io/game/snake/snake-4-pt/)
   * Implementing acceleration using Pyxel
@@ -264,6 +265,9 @@ pyxel app2html ./bird_flap_web_33.pyxapp
 ```
 
 Creates the file: *bird_flap_web_33.html*
+
+Try it out at the following link: https://www.dropbox.com/s/7abm1q5lmj3hsyh/bird_flap_web_33.html?dl=0
+
 
 ## Pyxel executable app
 
