@@ -366,8 +366,19 @@ class Bird:
 
 In this case, you added a *move* method that changes the bird sprite's x and y coordinates by one pixel in some random direction. Then you moved the sprite animation code from the *update* method into its own *animate* method. Finally, you called the *animate* and *move* methods in the modified *update* method.
 
-You did not need to modify the main application class, *App*, to change the behavior of all the bird sprites.
+You did not need to modify the main application class, *App*, to change the behavior of all the bird sprites. You may be starting to see how Python classes and object-oriented programming enable programmers to build objects that can hide information from each other so that the code in one object does not need to know about all the code in another object. 
+
+# Information hiding
+
+[Information-hiding](https://en.wikipedia.org/wiki/Information_hiding) makes it easier for multiple programmers to work together on the same project.
+
+*Information hiding* is also called *encapsulation*. It is usually accomplished by breaking a large program up into smaller files, called modules. Programmers who are working together agree on how code in one module can access code in another module. This agreement is called an *interface*. As long as you do not change a module's interface, you can add or change the rest of the code to improve the functionality of your module, without negatively impacting the functionality of your colleagues' code. 
+
+For example, you can split your current program into two files, or modules, where one file contains all the code for the sprite class, currently called *Bird*, and the other file contains all the main program code, including the Pyxel *App* class. When you combine *information-hiding* concepts with classes you can re-use and *customize* other programmers' code in your program.
+
+For example, split your current program into two files named *sprites.py* and *game.py*. Put the *Bird* class *sprites.py* file and rest of the program in the *game.py* file. Then, generalize the code in both files by renaming the *Bird* class in the *sprites.py* file 
 
 
+ in the rite your current program
 
 
