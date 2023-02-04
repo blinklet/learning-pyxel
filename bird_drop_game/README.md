@@ -159,39 +159,39 @@ Change the *update* function to the following:
 
 ```python
 def update():
-    bird_sprite_x = 8 * (pyxel.frame_count % 3)
+    sprite_u = 8 * (pyxel.frame_count % 3)
 ```
 
-The *pyxel.frame_count* increments by one each time Pyxel runs through the game loop. The [modulo operator](https://datagy.io/python-modulo/) leaves the remainder of division so will result in a value of 0, 1, or 2 depending on the frame count. Multiply that by eight and you get a *bird_sprite_x* value of 0, 8, or 16 depending on the frame.
+The *pyxel.frame_count* increments by one each time Pyxel runs through the game loop. The [modulo operator](https://datagy.io/python-modulo/) leaves the remainder of division so will result in a value of 0, 1, or 2 depending on the frame count. Multiply that by eight and you get a *sprite_u* value of 0, 8, or 16 depending on the frame.
 
-Replace the sprite hard-coded x value in *pyxel.blt* function in the *play* function with the *bird_sprite_x* variable.
+Replace the sprite hard-coded x value in *pyxel.blt* function in the *play* function with the *sprite_u* variable.
 
 ```python
 def draw():
     pyxel.cls(6)
-    pyxel.blt(28, 12, 0, bird_sprite_x, 16, 8, 8, 2)
+    pyxel.blt(28, 12, 0, sprite_u, 16, 8, 8, 2)
 ```
 
-When you save and run the program, you see the first problem you need to solve: Python stops the program with an error because the variable *bird_sprite_x* is not available outside the scope of the *update* and *draw* functions.
+When you save and run the program, you see the first problem you need to solve: Python stops the program with an error because the variable *sprite_u* is not available outside the scope of the *update* and *draw* functions.
 
 One way to solve this is to use global variables, which are accessible in the local [namespace](https://docs.python.org/3/tutorial/classes.html#python-scopes-and-namespaces) of any function that declares them. 
 
-Below, I declared the `bird_sprite_x` variable as a global variable in both functions. This solves the problem, for now, but will get hard to manage as the program gets more complex. Generally, programmers do not want to use global variables to store program state.
+Below, I declared the `sprite_u` variable as a global variable in both functions. This solves the problem, for now, but will get hard to manage as the program gets more complex. Generally, programmers do not want to use global variables to store program state.
 
 Change the *update* and *draw* functions as shown below:
 
 ```python
 def update():
-    global bird_sprite_x
-    bird_sprite_x = 8 * (pyxel.frame_count % 3)
+    global sprite_u
+    sprite_u = 8 * (pyxel.frame_count % 3)
 
 def draw():
-    global bird_sprite_x
+    global sprite_u
     pyxel.cls(6)
-    pyxel.blt(28, 12, 0, bird_sprite_x, 16, 8, 8, 2)
+    pyxel.blt(28, 12, 0, sprite_u, 16, 8, 8, 2)
 ```
 
-Now the program runs, the variable *bird_sprite_x* can be assigned in the *update* function and its value can be read in the *draw* function.
+Now the program runs, the variable *sprite_u* can be assigned in the *update* function and its value can be read in the *draw* function.
 
 But, the animation is too fast. We could reduce the animation speed by lowering the frame rate but that is not a good solution for the project because it will impact the future versions of the game. 
 
@@ -200,21 +200,21 @@ Managing the speed of game elements relative to the game frame rate is one of th
 One solution is to create yet another global variable that tracks the sprite frame index. Increment the frame index once every ten frames. When the frame index has incremented to 3, reset it to zero so it can continue to be used to calculate the sprite animations. For example:
 
 ```python
-bird_index = 0
+animation_index = 0
 
 def update():
-    global bird_sprite_x
-    global bird_index
+    global sprite_u
+    global animation_index
     if pyxel.frame_count % 10 == 0:
-        if bird_index > 2:
-            bird_index = 0
-        bird_sprite_x = 8 * bird_index
-        bird_index += 1
+        if animation_index > 2:
+            animation_index = 0
+        sprite_u = 8 * animation_index
+        animation_index += 1
 ```
 
-Note that you had to assign a value to the *bird_index* variable in the main body of the program because you must assign a Python variable before you use it. This is OK because, after it the variable is initially assigned, that initialization code does not run again. The Pyxel framework only runs code that is inside the *update* and *draw* functions during the game.
+Note that you had to assign a value to the *animation_index* variable in the main body of the program because you must assign a Python variable before you use it. This is OK because, after it the variable is initially assigned, that initialization code does not run again. The Pyxel framework only runs code that is inside the *update* and *draw* functions during the game.
 
-After you save and run the program, the *bird_sprite_x* variable iterates between 0, 8, 16, and back to 0 every ten frames, or third of a second.
+After you save and run the program, the *sprite_u* variable iterates between 0, 8, 16, and back to 0 every ten frames, or third of a second.
 
 ![](./Images/bird_animation_1.gif)
 
@@ -235,19 +235,19 @@ class App:
     def __init__(self):
         pyxel.init(64, 32, fps=30)
         pyxel.load("platformer.pyxres")
-        self.bird_index = 0
+        self.animation_index = 0
         pyxel.run(self.update, self.draw)
 
     def update(self):
         if pyxel.frame_count % 10 == 0:
-            if self.bird_index > 2:
-                self.bird_index = 0
-            self.bird_sprite_x = 8 * self.bird_index
-            self.bird_index += 1
+            if self.animation_index > 2:
+                self.animation_index = 0
+            self.sprite_u = 8 * self.animation_index
+            self.animation_index += 1
 
     def draw(self):
         pyxel.cls(6)
-        pyxel.blt(28, 12, 0, self.bird_sprite_x, 16, 8, 8, 2)
+        pyxel.blt(28, 12, 0, self.sprite_u, 16, 8, 8, 2)
 
 App()
 ```
@@ -256,37 +256,37 @@ You defined a class named *App*. In it, you defined the *constructor* method, na
 
 The [*self* parameter](https://www.digitalocean.com/community/tutorials/how-to-construct-classes-and-define-objects-in-python-3) represents the instance of the class that will be created when it is instantiated, or called. This object is passed into every method in the class so that all variables in the class are accessible to all the class's methods, such as the *update* and *draw* methods. This eliminates the need for global variables because all variables are now attributes of the *self* object.
 
-Another benefit of using classes is realized when you create multiple instances of the same class. For example, you can define a `Bird` class, which separates all the logic and data associated with the bird sprites from the main program, and create multiple instances of birds on the screen, each with its own position data.
+Another benefit of using classes is realized when you create multiple instances of the same class. For example, you can define a *Sprite* class, which separates all the logic and data associated with the bird sprites from the main program, and create multiple instances of birds on the screen, each with its own position data.
 
 ```python
 import pyxel
 
-class Bird:
+class Sprite:
     def __init__(self, x, y, index):
-        self.bird_x = x
-        self.bird_y = y
-        self.bird_index = index
+        self.sprite_x = x
+        self.sprite_y = y
+        self.animation_index = index
 
     def update(self):
         if pyxel.frame_count % 10 == 0:
-            if self.bird_index > 2:
-                self.bird_index = 0
-            self.bird_sprite_x = 8 * self.bird_index
-            self.bird_index += 1
+            if self.animation_index > 2:
+                self.animation_index = 0
+            self.sprite_u = 8 * self.animation_index
+            self.animation_index += 1
 
     def draw(self):
-        pyxel.blt(self.bird_x, self.bird_y, 0, self.bird_sprite_x, 16, 8, 8, 2)
+        pyxel.blt(self.sprite_x, self.sprite_y, 0, self.sprite_u, 16, 8, 8, 2)
 ```
 
-The *App* class is now simplified because it does not need to manage the state of each bird sprite. When the *App* class is called, it's initialization method instantiates two bird sprite objects by twice calling the Bird class with different parameters. Then we just call the bird sprite objects' *update* and *draw* methods in the *App* class during each game loop cycle, or frame.
+The *App* class is now simplified because it does not need to manage the state of each bird sprite. You are beginning to see the benefits of *information hiding*, which we will discuss more later. When the *App* class is called, it's initialization method instantiates two bird sprite objects by twice calling the *Sprite* class with different parameters. Then we just call the bird sprite objects' *update* and *draw* methods in the *App* class during each game loop cycle, or frame.
 
 ```python
 class App:
     def __init__(self):
         pyxel.init(64, 32, fps=30)
         pyxel.load("platformer.pyxres")
-        self.bird1 = Bird(6,6,0)
-        self.bird2 = Bird(28,12,1)
+        self.bird1 = Sprite(6,6,0)
+        self.bird2 = Sprite(28,12,1)
         pyxel.run(self.update, self.draw)
 
     def update(self):
@@ -305,7 +305,7 @@ You see in the example above, each bird object is initialized with data paramete
 
 You can easily add yet another bird, with its own position and animation index, with just one line of code in each of the *App* class's *update* and *draw* methods. You could add a *for* loop that creates hundreds of bird sprites and saves them in a list. Then, you could update and draw those sprites by iterating through the sprite list in each of the *update* and *draw* methods. 
 
-We could further extend the Bird class to include methods that change its position on the screen as time passes and to detect and respond to other game elements. All the information about position, speed, animation is managed separately by each instance of the Bird class so it is possible to manage many birds in the same program.
+We could further extend the *Sprite* class to include methods that change its position on the screen as time passes and to detect and respond to other game elements. All the information about position, speed, animation is managed separately by each instance of the *Sprite* class so it is possible to manage many birds in the same program.
 
 For example, if we change the *App* class as shown below, we can generate a dozen bird sprites in random locations on the screen:
 
@@ -314,46 +314,46 @@ class App:
     def __init__(self):
         pyxel.init(64, 32, fps=30)
         pyxel.load("platformer.pyxres")
-        self.bird_list = []
+        self.sprite_list = []
         for i in range(12):
             a = pyxel.rndi(0,56)
             b = pyxel.rndi(0,24)
             c = pyxel.rndi(0,2)
-            self.bird_list.append(Bird(a, b, c))
+            self.sprite_list.append(Sprite(a, b, c))
         pyxel.run(self.update, self.draw)
 
     def update(self):
         for i in range(12):
-            self.bird_list[i].update()
+            self.sprite_list[i].update()
 
     def draw(self):
         pyxel.cls(6)
         for i in range(12):
-            self.bird_list[i].draw()
+            self.sprite_list[i].draw()
 
 App()
 ```
 
 Running the program shows twelve bird sprites in random locations around the screen, all flapping their wings independently.
 
-Defining the bird sprite state in the *Bird* class allows us to change the behavior of the bird sprites instantiated from that class without changing the rest of the. For example, if we change the Bird class to make the bird sprites move one pixel in a random direction every ten frame, we change the Bird class to the following:
+Defining the bird sprite state in the *Sprite* class allows us to change the behavior of the bird sprites instantiated from that class without changing the rest of the. For example, if we change the *Sprite* class to make the bird sprites move one pixel in a random direction every ten frame, we change the *Sprite* class to the following:
 
 ```python
-class Bird:
+class Sprite:
     def __init__(self, x, y, index):
-        self.bird_x = x
-        self.bird_y = y
-        self.bird_index = index
+        self.sprite_x = x
+        self.sprite_y = y
+        self.animation_index = index
 
     def move(self):
-        self.bird_x += pyxel.rndi(-1,1)
-        self.bird_y += pyxel.rndi(-1,1)
+        self.sprite_x += pyxel.rndi(-1,1)
+        self.sprite_y += pyxel.rndi(-1,1)
     
     def animate(self):
-        if self.bird_index > 2:
-            self.bird_index = 0
-        self.bird_sprite_x = 8 * self.bird_index
-        self.bird_index += 1
+        if self.animation_index > 2:
+            self.animation_index = 0
+        self.sprite_u = 8 * self.animation_index
+        self.animation_index += 1
 
     def update(self):
         if pyxel.frame_count % 10 == 0:
@@ -361,7 +361,7 @@ class Bird:
             self.move() 
 
     def draw(self):
-        pyxel.blt(self.bird_x, self.bird_y, 0, self.bird_sprite_x, 16, 8, 8, 2)
+        pyxel.blt(self.sprite_x, self.sprite_y, 0, self.sprite_u, 16, 8, 8, 2)
 ```
 
 In this case, you added a *move* method that changes the bird sprite's x and y coordinates by one pixel in some random direction. Then you moved the sprite animation code from the *update* method into its own *animate* method. Finally, you called the *animate* and *move* methods in the modified *update* method.
@@ -374,11 +374,162 @@ You did not need to modify the main application class, *App*, to change the beha
 
 *Information hiding* is also called *encapsulation*. It is usually accomplished by breaking a large program up into smaller files, called modules. Programmers who are working together agree on how code in one module can access code in another module. This agreement is called an *interface*. As long as you do not change a module's interface, you can add or change the rest of the code to improve the functionality of your module, without negatively impacting the functionality of your colleagues' code. 
 
-For example, you can split your current program into two files, or modules, where one file contains all the code for the sprite class, currently called *Bird*, and the other file contains all the main program code, including the Pyxel *App* class. When you combine *information-hiding* concepts with classes you can re-use and *customize* other programmers' code in your program.
+For example, you can split your current program into two files, or modules, named *sprites.py* and *game.py* where the *sprites.py* file contains all the code for the *Sprite* class, and the *game.py* file contains all the main program code, including the Pyxel *App* class. 
 
-For example, split your current program into two files named *sprites.py* and *game.py*. Put the *Bird* class *sprites.py* file and rest of the program in the *game.py* file. Then, generalize the code in both files by renaming the *Bird* class in the *sprites.py* file 
+To make it clear how we can limit what the main program needs to know about each sprite, modify the code in each file so that all the logic related to positioning and animating the sprites is in the *Sprite* class in the *sprites.py* module and the main game logic is simplified to just instantiating new sprite objects and calling each sprite's *update* and *draw* methods during the game loop.
+
+Modify the *game.py* file so it looks like the following. First, you need to import the Sprite class from the *sprites.py* module. Then, simplify the *App* class* so it no longer needs to know the position and animation index of each sprite. In it's constructor, the *App* object instantiates new sprites simply by calling the *Sprite* class and appending the returned sprite objects to a list. All the code that randomly assigns position and animation index will be encapsulated inside the *Sprite* class and the actual values for those attributes, which are different for each sprite object, will be managed and updated within each sprite object.
+
+```python
+import pyxel
+from sprites import Sprite
+
+class App:
+    def __init__(self):
+        pyxel.init(64, 32, fps=30)
+        pyxel.load("platformer.pyxres")
+        self.sprite_list = []
+        for _ in range(12):
+            self.sprite_list.append(Sprite())
+        pyxel.run(self.update, self.draw)
+
+    def update(self):
+        for i in range(12):
+            self.sprite_list[i].update()
+
+    def draw(self):
+        pyxel.cls(6)
+        for i in range(12):
+            self.sprite_list[i].draw()
+
+App()
+```
+
+Now, whomever maintains the *game.py* file can concentrate on adding and removing sprites and adding game features like different screens or interesting backgrounds and can leave the work of improving sprite animation and movement to another programmer who maintains the *sprites* module.
+
+Modify the code in the *sprites.py* module so that it no longer accepts parameters. Add to the *Sprite* class's controctor method the code that assigns the initial position and animation index. To make the *sprite* class more customizable, I added separate timers for animation and movement and expressed the timer values as variables, which become object attributes when the constructor runs, instead of hard-coded numbers.
+
+Also, generalize the animation logic so that we no longer need animations to be across the same line in the Pyxel resource file. Define the animation sequence as a set up x and y coordinates pointing to upper right corner of each sprite in the animation. Assign the sprite width and height to variables in the constructor. This will make is possible for programmers who use the Sprite class to customize it in their game program.
+
+```python
+import pyxel
+
+class Sprite:
+    def __init__(self):
+        self.x = pyxel.rndi(0,56)
+        self.y = pyxel.rndi(0,24)
+        self.w = 8
+        self.h = 8
+        self.col = 2
+        self.animate_interval = 10
+        self.move_interval = 25
+        self.animation = ((16, 16), (0, 16), (8, 16), (0, 16))
+        self.animation_index = pyxel.rndi(0,len(self.animation))
+
+    def move(self):
+        if pyxel.frame_count % self.move_interval == 0:
+            self.x += pyxel.rndi(-1,1)
+            self.y += pyxel.rndi(-1,1)
+    
+    def animate(self):
+        if pyxel.frame_count % self.animate_interval == 0:
+            if self.animation_index == len(self.animation):
+                self.animation_index = 0
+            self.u, self.v = self.animation[self.animation_index]
+            self.animation_index += 1
+
+    def update(self):
+        self.animate()
+        self.move() 
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, self.u, self.v, self.w, self.h, self.col)
+```
+
+When you run the *game.py* program you will see the same result as before: twelve bird sprites animating and moving around on the screen. 
+
+# Inheritance
+
+[Inheritance](https://www.digitalocean.com/community/tutorials/understanding-class-inheritance-in-python-3) is an object-oriented programming feature that enables you to add new types of sprites to your game program without modifying any code in the *sprites.py* file. You can build new classes based on existing classes where you *inherit* all the functionality of the base class and then add new code that changes some of the base class' attributes or methods in the new class.'
+
+For example, in the game program, Add a new type of sprite taht looks like an ball that flashes different colors. Open the Pyxel resource file and find the three different-colored ball sprites:
+
+```bash
+$ pyxel edit platformer.pyxres
+```
+
+See that each ball sprite is six pixels wide and six pixels high, and that the green ball sprite is located at coordinates (1, 9), the red ball is located at coordinates (9, 9), and the yellow ball sprite is located at coordinates (17, 9). Quit the Pyxel Edit program and use the information you gathered to build a new sprite type.
+
+You do not need to write a whole new class for the ball sprite. Build the new *Ball* class by inheriting all the attributes and methods from the *Sprite* class and then just change the sprite width, height, and animation sequence information in the *Ball* class constructor. See the code below, which creates the new class:
+
+```python
+class Egg(Sprite):
+    def __init__(self):
+        super().__init__()
+        self.w = 6
+        self.h = 6
+        self.animation = ((1, 9), (9, 9), (17, 9))
+        self.animation_index = pyxel.rndi(0,len(self.animation))
+```
+
+You *inherit* the base class's functionality by calling the [super class's constructor method](https://stackoverflow.com/questions/576169/understanding-python-super-with-init-methods/27134600#27134600) in the new class's constructor. The super function just provides a [general-purpose way to call the parent class's constructor method](https://realpython.com/python-super/) and is recommended practice instead of "hard coding" the Sprite class's constructor with a statement like: `Sprite.__init__(self)`.
 
 
- in the rite your current program
+Insert the above code before the *App* class in the *game.py* file. The modify the *App* class constructor so it addes both ball sprites and normal bird sprites to the sprite list. Change the sprite list creation loop in the *App* class constructor to the following, which creates a list with twelve elements: six birds and six balls.
+
+```python
+        self.sprite_list = []
+        for _ in range(6):
+            self.sprite_list.append(Sprite())
+            self.sprite_list.append(Ball())
+```
+
+The new *game.py* file will look like the file below. 
+
+```python
+import pyxel
+from sprites import Sprite
+
+class Ball(Sprite):
+    def __init__(self):
+        super().__init__()
+        self.w = 6
+        self.h = 6
+        self.animation = ((1, 9), (9, 9), (17, 9))
+        self.animation_index = pyxel.rndi(0,len(self.animation))
+
+class App:
+    def __init__(self):
+        pyxel.init(64, 32, fps=30)
+        pyxel.load("platformer.pyxres")
+ 
+        self.sprite_list = []
+        for _ in range(6):
+            self.sprite_list.append(Sprite())
+            self.sprite_list.append(Ball())           
+        print(self.sprite_list)
+        pyxel.run(self.update, self.draw)
+
+    def update(self):
+        for i in range(12):
+            self.sprite_list[i].update()
+
+    def draw(self):
+        pyxel.cls(6)
+        for i in range(12):
+            self.sprite_list[i].draw()
+
+App()
+```
+
+You added a different sprite, a ball, with its own position data and its own complex animation and movement logic by adding just a few lines of code to your game program. You did not need to ask the other programmer who maintains the *sprites.py* file to make any changes to their file. You can see how using classes can make reusing code easier and how classes support the concept of information hiding, resulting in program simplification.
+
+
+# Conclusion
+
+You build and object-oriented game program using Python classes and used concepts like information-hiding, encapsulation, and code re-use that help make programming easier. You got a taste of what it would be like to work on a larger project with other programmers and how the concepts you excercised in this tutorial can help.
+
+You also learned about building games using the Pyxel framework and created a simple game animation. if you are interested, you will find it realtively easy to add more functionality to the game such as user input and collision detection. Please see the following link to see the source code for a full-featured game I created by extending the work already started in this turorial.
+
 
 
