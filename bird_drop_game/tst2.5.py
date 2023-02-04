@@ -12,6 +12,8 @@ class Bird:
                 self.bird_index = 0
             self.bird_sprite_x = 8 * self.bird_index
             self.bird_index += 1
+            self.bird_x += pyxel.rndi(-1,1)
+            self.bird_y += pyxel.rndi(-1,1) 
 
     def draw(self):
         pyxel.blt(self.bird_x, self.bird_y, 0, self.bird_sprite_x, 16, 8, 8, 2)
@@ -21,17 +23,21 @@ class App:
     def __init__(self):
         pyxel.init(64, 32, fps=30)
         pyxel.load("platformer.pyxres")
-        self.bird1 = Bird(6,6,0)
-        self.bird2 = Bird(28,12,1)
+        self.bird_list = []
+        for i in range(12):
+            a = pyxel.rndi(0,56)
+            b = pyxel.rndi(0,24)
+            c = pyxel.rndi(0,2)
+            self.bird_list.append(Bird(a, b, c))
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        self.bird1.update()
-        self.bird2.update()
+        for i in range(12):
+            self.bird_list[i].update()
 
     def draw(self):
         pyxel.cls(6)
-        self.bird1.draw()
-        self.bird2.draw()
+        for i in range(12):
+            self.bird_list[i].draw()
 
 App()
